@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Immersion Coolant Crash Course</title>
+<meta name="description" content="A fundamentals-to-expert crash course on single-phase immersion cooling and Group III base oil as a coolant: heat transfer, OCP figures of merit, dielectric and fire-safety properties, qualification and market sizing.">
+<meta property="og:title" content="Immersion Coolant Crash Course">
+<meta property="og:description" content="18 lessons, fundamentals → expert: why AI racks need liquid, how OCP scores a coolant, and how to defend Group III base oil as one.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="style.css">
+<style>
+main{max-width:720px;display:block}
+header{position:sticky;top:0;z-index:5}
+header h1{margin-bottom:6px}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.toc button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 8px;font-size:12px;cursor:pointer;color:#334}
+.toc button.on{background:var(--cond);color:#fff;border-color:var(--cond)}
+.toc button.done{border-color:var(--feas)}
+.back{color:#cfeefc;font-size:13px;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">ADIPEC 2026 · crash course</div>
+  <h1>Cooling the AI era — immersion coolants from first principles</h1>
+  <a class="back" href="index.html">← back to the simulator</a>
+</header>
+<main>
+  <div id="toc" class="toc"></div>
+  <div class="storycard">
+    <div class="lessonhead"><span id="chapBadge" class="chapbadge"></span><span id="lessonCount"></span></div>
+    <div class="progbar"><div id="progFill" class="progfill"></div></div>
+    <h2 id="storyTitle"></h2>
+    <div id="storyBody"></div>
+    <div id="lessonCheck"></div>
+    <div class="storynav">
+      <button id="prevBtn">‹ Back</button>
+      <button id="nextBtn">Next ›</button>
+      <a class="ghost" href="index.html" style="text-decoration:none;padding:9px 14px;border-radius:8px;border:1px solid var(--cond);color:var(--cond);font-weight:700">Open the simulator →</a>
+    </div>
+  </div>
+  <p class="fine">Tags: <span class="src ext">DECK</span> printed on the ADIPEC 2026 slides · <span class="src calc">CALC</span> worked here from those numbers · <span class="src std">STD</span> textbook physics or standard definitions. No laboratory data for a production coolant is shown.</p>
+</main>
+<script src="course.js"></script>
+</body>
+</html>
