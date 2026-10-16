@@ -45,7 +45,7 @@ const STORY = [
  <div class="defends">A hydrocarbon coolant contains <b>no PFAS</b> and has a global-warming potential of about zero.</div>`},
 
 {ch:"4 · Thermal test", title:"OCP figures of merit",
- set:{mu:15.4},
+ set:{mu:13.0},
  body:`<p>The Open Compute Project (OCP) compares fluids with three <b>figures of merit</b> that do not depend on a particular heat sink:</p>
  <div class="eqn">FOM1 = <i>k</i> · ( <span class="frac"><span><i>β</i> <i>c</i><sub>p</sub> <i>ρ</i>²</span><span><i>μ</i> <i>k</i></span></span> )<sup>0.2813</sup></div>
  <div class="eqnnote">natural convection · Tier 1 ≥ 35 (current servers) · Tier 2 ≥ 45 (future servers)</div>
@@ -53,35 +53,47 @@ const STORY = [
  <div class="eqnnote">forced convection · requirement &gt; 19</div>
  <div class="eqn">FOM3 = <i>μ</i></div>
  <div class="eqnnote">pressure drop · requirement ≤ 15 mPa·s</div>
- <p>Hydrocarbon base oils in the academic literature score <b>FOM1 38–51</b>, <b>FOM2 31–32</b>, <b>μ 5.5–15 mPa·s</b>. Group III sits at <b>FOM1 ≈ 38</b> and <b>FOM2 ≈ 31</b>: Tier 1, comfortably above the forced-convection bar.</p>`},
+ <p>In OCP's own chart, hydrocarbon-family liquids span roughly <b>FOM1 27–52</b>. Computed from public measured data (CRC AVFL-37), a light <b>2 cSt Group III</b> gives <b>FOM1 37.2</b> and <b>FOM2 28.8</b>: Tier 1, comfortably above the forced-convection bar. Standard 4 cSt grades fall to about 30–31, below Tier 1.</p>`},
 
 {ch:"4 · Thermal test", title:"The viscosity lever",
- set:{mu:15.4},
- body:`<p>Group III's viscosity at 25 °C is about <b>15.4 mPa·s</b>, just over the 15 mPa·s limit. That is why slide 9 reads <b>NEAR LIMIT</b>, not pass.</p>
- <p>Viscosity sits in the denominator of FOM1, so a slightly lighter cut helps twice: it clears FOM3 <i>and</i> raises FOM1.</p>
- <div class="eqn">FOM1(<i>μ</i>) ≈ 38 · ( <span class="frac"><span>15.4</span><span><i>μ</i></span></span> )<sup>0.2813</sup></div>
- <div class="example"><b>Check against the literature.</b> At μ = 5.5 mPa·s this gives 38 × (15.4/5.5)<sup>0.2813</sup> ≈ <b>50.8</b>, which matches the top of the literature range (51). The scaling is consistent with the slide.</div>
- <p>Drag the viscosity slider in the Sandbox. Tier 2 (FOM1 ≥ 45) needs roughly μ ≤ 8.4 mPa·s with other properties fixed.</p>
- <div class="litnote"><b>The catch:</b> lighter cuts usually have a <b>lower flash point</b>. The real design window lies between the viscosity limit and the fire-safety limit.</div>`,
- check:{q:"You cut viscosity from 15.4 to 12 mPa·s, holding everything else. What happens to FOM1?",
-   opts:[{t:"Falls below Tier 1"},{t:"Rises to about 40.8",ok:true},{t:"Unchanged; viscosity only affects FOM3"}],
-   reveal:"38 × (15.4/12)^0.2813 ≈ 40.8. Lower viscosity strengthens natural convection, so FOM1 rises. It is still Tier 1; Tier 2 needs about 8.4 mPa·s."}},
+ set:{mu:13.0},
+ body:`<p>The 2 cSt Group III's viscosity at 25 °C is about <b>13.0 mPa·s</b>, under the 15 mPa·s limit. A standard 4 cSt grade is about 29 mPa·s and fails. So the <b>grade</b> decides the thermal result.</p>
+ <p>Viscosity sits in the denominator of FOM1, so a lighter cut helps twice: it clears FOM3 <i>and</i> raises FOM1.</p>
+ <div class="eqn">FOM1(<i>μ</i>) ≈ 37.2 · ( <span class="frac"><span>13.0</span><span><i>μ</i></span></span> )<sup>0.2813</sup></div>
+ <div class="example"><b>Check against measured data.</b> At the 3 cSt grade's 17.2 mPa·s this gives 37.2 × (13.0/17.2)<sup>0.2813</sup> ≈ <b>34.4</b>; computed from that grade's own measured properties it is <b>34.7</b>. The scaling holds.</div>
+ <p>Drag the viscosity slider in the Sandbox. Tier 2 (FOM1 ≥ 45) needs roughly μ ≤ 6.6 mPa·s at 25 °C with other properties fixed; at a 50 °C reference, which OCP plans to adopt, this fluid is already about 46.</p>
+ <div class="litnote"><b>The catch:</b> lighter cuts have a <b>lower flash point</b>. The wide 2 cSt grade sold today is 160 °C open cup. The next step shows how a narrow cut keeps the viscosity and recovers the flash point.</div>`,
+ check:{q:"You switch to the heavier 3 cSt grade (17.2 mPa·s). What happens?",
+   opts:[{t:"FOM1 rises because the oil is heavier"},{t:"FOM1 falls to about 34.4, just below Tier 1, and FOM3 fails",ok:true},{t:"Nothing; viscosity only affects FOM3"}],
+   reveal:"37.2 × (13.0/17.2)^0.2813 ≈ 34.4, under Tier 1's 35, and 17.2 mPa·s breaks the 15 mPa·s limit. A heavier cut buys flash point at the cost of both thermal gates."}},
+
+{ch:"4 · Thermal test", title:"The design window: a narrow C21–C25 cut",
+ set:{preset:"g3"},
+ body:`<p>Two limits pull in opposite directions. <b>Viscosity</b> (μ25 ≤ 15 mPa·s) needs a light oil: KV100 ≤ 2.8 cSt, which a light base oil reaches when it boils about 356–417 °C, roughly <b>C21 to C26</b>. <b>Flash point</b> (≥ 150 °C closed cup) is set by the lightest molecules in the cut.</p>
+ <p>So the target is a <b>narrow cut, C21–C25</b>: the tail below C21 is removed for flash point, and the heavy end above C25 is removed to keep viscosity down. A cut simulation (DWSIM characterisation) gives μ25 ≈ 13.6 mPa·s, FOM1 ≈ 36.8 and 163–189 °C closed cup for C21–C25; the wider C21–C25 sits at 14.6 mPa·s, too close to the limit.</p>
+ <p>• Wide 2 cSt cut (sold today): μ25 13.0 ✓, but 160 °C open cup, near the gate<br>
+    • 4 cSt grade (≈ C25–C35): 200–230 °C open cup ✓, but μ25 ≈ 29 and FOM1 ≈ 31 ✗<br>
+    • <b>Target narrow cut C21–C25</b>: μ25 ≈ 13 ✓, FOM1 ≈ 37 ✓, flash ≈ 163–189 °C closed cup (estimate)</p>
+ <div class="example"><b>Public proof that both can be met:</b> narrow-cut isoparaffinic fluids with the same viscosity (KV40 9.6–9.8 cSt) are sold at <b>184–191 °C closed cup</b>. A crude-derived Group III boils slightly lower at equal viscosity, so the estimate for a refinery cut is set lower, at 163–189 °C.</div>`,
+ check:{q:"You remove only the light tail (below C21) from a wide 2 cSt cut. What happens?",
+   opts:[{t:"Flash point rises, but viscosity also rises past the limit",ok:true},{t:"Flash point rises and viscosity is unchanged"},{t:"Nothing changes"}],
+   reveal:"Simulated: flash rises (about +18 °C) but μ25 goes from about 12.7 to 16.9 mPa·s, which fails. The light molecules were thinning the oil. Cutting the heavy end too (above C25–C26) brings viscosity back under 15."}},
 
 {ch:"5 · Electrical & fire", title:"Signal integrity, insulation, fire safety",
  body:`<p>A coolant that touches every trace on the board must pass three more groups of OCP gates:</p>
  <p><b>Signal integrity</b>: dielectric constant <b>Dk &lt; 2.3</b> (how strongly the fluid loads high-speed traces) and loss tangent <b>Df ≤ 0.05</b> (how much signal energy it absorbs).</p>
  <p><b>Electrical insulation</b>: dielectric strength <b>≥ 6 kV/mm</b> and volume resistivity <b>≥ 2.0 GΩ·m</b> when new.</p>
  <p><b>Fire safety</b>: flash point <b>≥ 150 °C closed cup</b> and autoignition temperature <b>≥ 300 °C</b>.</p>
- <p>Group III: Dk <b>2.0–2.3</b>, strength <b>8–24 kV/mm</b>, flash <b>220 °C</b> (open cup, reference grade), autoignition <b>300–370 °C</b>.</p>`},
+ <p>Group III (public data): volume resistivity about <b>12,400 GΩ·m</b> (passes easily). Flash point: the wide 2 cSt cut is 160 °C open cup; the <b>target narrow cut</b> is estimated at <b>163–189 °C closed cup</b>. Dk, Df, dielectric strength and autoignition are <b>not yet measured</b>.</p>`},
 
-{ch:"6 · Verdict", title:"The scorecard: promising, with three tests to run",
+{ch:"6 · Verdict", title:"The scorecard: promising, with the fire-safety test first",
  set:{preset:"g3"},
- body:`<p>Putting the four pillars together (slide 9):</p>
- <p>• <b>Thermal</b>: FOM1 ≈ 38 (≥ 35) and FOM2 ≈ 31 (&gt; 19). <b>Promising.</b><br>
- • <b>Viscosity</b>: 15.4 vs ≤ 15 mPa·s. <b>Near limit.</b><br>
- • <b>Electrical &amp; signal</b>: Dk 2.0–2.3 and 8–24 kV/mm. <b>Promising; test at high frequency.</b><br>
- • <b>Safety &amp; environment</b>: flash 220 °C (open cup), autoignition 300–370 °C, no PFAS. <b>Closed-cup test needed.</b></p>
- <p>This is a <b>screening</b> result built on literature and reference-grade data. The scorecard in the Sandbox marks every open item; nothing here is a qualified product.</p>`},
+ body:`<p>Putting the pillars together for the <b>target narrow cut C21–C25</b> (slide 9):</p>
+ <p>• <b>Thermal</b>: FOM1 37.2 (≥ 35) and FOM2 28.8 (&gt; 19). <b>Pass.</b><br>
+ • <b>Viscosity</b>: 13.0 vs ≤ 15 mPa·s. <b>Pass.</b><br>
+ • <b>Electrical</b>: resistivity ≈ 12,400 GΩ·m (≥ 2). <b>Pass.</b> Dk/Df and dielectric strength <b>to test</b>.<br>
+ • <b>Safety &amp; environment</b>: flash ≈ 163–189 °C closed cup (estimate) vs ≥ 150 °C; no PFAS. <b>Confirm by ASTM D93</b>; autoignition to test.</p>
+ <p>This is a <b>screening</b> result from public measured data. The scorecard in the Sandbox marks every open item; nothing here is a qualified product.</p>`},
 
 {ch:"7 · Proof plan", title:"Three-stage qualification",
  body:`<p>① <b>Fluid characterisation</b>: thermal, electrical, chemical and safety properties against the OCP fluid gates. This is where Df, resistivity and closed-cup flash get measured.</p>
@@ -99,7 +111,7 @@ const STORY = [
  <div class="litnote">The 32,000 t applies 10 L/kW across the whole pipeline. Use the "share immersion-cooled" slider to see smaller scenarios.</div>`},
 
 {ch:"9 · Bottom line", title:"An opportunity for refineries",
- body:`<p>AI data centres are pushing past what air cooling can do. Fluorinated coolants face a PFAS wall. <b>Group III base oil</b>, already made by refineries, screens as a promising single-phase immersion coolant: Tier 1 thermal performance, good dielectric behaviour, no PFAS, at a fraction of the fluorinated price.</p>
- <p>Three items stand between screening and a qualified product: <b>viscosity just over the limit</b>, <b>Dk at high frequency</b> and a <b>closed-cup flash point</b>. The three-stage plan addresses all three.</p>
+ body:`<p>AI data centres are pushing past what air cooling can do. Fluorinated coolants face a PFAS wall. <b>Group III base oil</b>, already made by refineries, screens as a promising single-phase immersion coolant: Tier 1 thermal performance, very high resistivity, no PFAS, at a fraction of the fluorinated price.</p>
+ <p>A <b>narrow C21–C25 cut</b> can meet the thermal gates and the flash-point gate together. What stands between this target and a qualified product: a measured <b>closed-cup flash point</b>, <b>Dk at high frequency</b>, dielectric strength, autoignition and material compatibility. The three-stage plan addresses all of them.</p>
  <div class="defends">Open the <b>Sandbox</b> to test your own fluid, the <b>Tough Q&amp;A</b> for the hard questions, or the <b>Crash course</b> for the physics from first principles.</div>`},
 ];

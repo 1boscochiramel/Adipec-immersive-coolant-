@@ -25,8 +25,12 @@ const DECK = {
 
 // fluid presets. fom1 is quoted at the preset's own viscosity mu0; null = not reported.
 const PRESETS = {
-  g3:   {name:"Group III base oil (deck values)", fom1:38, mu0:15.4, fom2:31, dk:2.3, df:null, str:8, res:null, flash:220, cc:false, ait:300,
-         note:"Slide 9. Ranges are entered at their least favourable end: Dk 2.0–2.3 → 2.3, strength 8–24 → 8 kV/mm, autoignition 300–370 → 300 °C."},
+  g3:   {name:"Group III target: narrow cut C21–C25", fom1:37.2, mu0:13.0, fom2:28.8, dk:null, df:null, str:null, res:12400, flash:163, flashHi:189, flashEst:true, cc:false, ait:null,
+         note:"Target narrow cut C21–C25 (KV100 ≤ 2.8 cSt, tail below C21 and heavy end above C25 removed; simulated μ25 ≈ 13.6 mPa·s, flash 163–189 °C closed cup). Thermal, viscosity and resistivity: measured 2 cSt Group III of equivalent viscosity (CRC AVFL-37, SwRI 2022). Flash: ESTIMATE 163–189 °C closed cup, from a cut simulation (DWSIM characterisation) and narrow-cut isoparaffinic fluids of the same viscosity (Shell Diala S4 ZX-I, PMCC 184–191 °C). Dk, Df, dielectric strength and autoignition: not yet measured."},
+  wide2: {name:"Wide 2 cSt Group III cut (as sold)", fom1:37.2, mu0:13.0, fom2:28.8, dk:null, df:null, str:null, res:12400, flash:160, cc:false, ait:260, aitLt:true,
+         note:"Same viscosity as the target, but a wide cut with a light tail: 160 °C open cup and autoignition '> 260 °C' (lower bound) on the producer's SDS (SK Yubase 2). Closed cup reads lower, at or near the 150 °C gate."},
+  g4:   {name:"4 cSt Group III (≈ C25–C35)", fom1:31.1, mu0:28.9, fom2:30.2, dk:null, df:null, str:null, res:null, flash:200, cc:false, ait:320, aitLt:true,
+         note:"Heavier standard grade, computed from CRC AVFL-37 measured data: fire-safe (200–230 °C open cup, producer TDS; autoignition > 320 °C, SDS) but μ25 ≈ 29 mPa·s and FOM1 ≈ 31 fail the thermal gates at 25 °C."},
   lit:  {name:"Hydrocarbon base oils, lighter end of literature", fom1:51, mu0:5.5, fom2:32, dk:null, df:null, str:null, res:null, flash:null, cc:false, ait:null,
          note:"Slide 7 literature ranges: FOM1 up to 51, FOM2 up to 32, μ down to 5.5 mPa·s. Electrical and fire values not given on the slide."},
   custom:{name:"Custom — enter your own measurements", fom1:40, mu0:12, fom2:25, dk:2.1, df:0.001, str:10, res:5, flash:180, cc:true, ait:320,
@@ -45,6 +49,11 @@ const FIELDS = [   // key, label, unit, step
 
 const REFS = [
   ["ADIPEC 2026 slides, B. Chiramel", "every DECK value on this page: rack bands, OCP limits, Group III read-outs, PFAS status, roadmap, market sizing"],
+  ["CRC Report AVFL-37 (Southwest Research Institute, 2022)", "measured viscosity, density, conductivity, specific heat and resistivity of a 2 cSt Group III base oil, used for the Group III preset"],
+  ["Repsol / RLESA Base Oils GII-GIII technical data sheet (2017)", "open-cup flash points (2 and 4 cSt grades), pour point and sulphur"],
+  ["SK Lubricants YUBASE 2 safety data sheet (via NextSDS)", "wide 2 cSt cut: 160 °C open cup, autoignition > 260 °C"],
+  ["Shell Diala S4 ZX-I and Shell S5 X data sheets", "narrow-cut isoparaffinic fluids at KV40 9.6–9.8 cSt: 184–191 °C closed cup, 200 °C open cup, autoignition 355 °C"],
+  ["Chevron patent US7846880B2", "light base oil at KV100 2.81 cSt boils 356 / 386 / 417 °C at 5 / 50 / 95 % (≈ C21–C25)"],
   ["Open Compute Project (OCP), immersion fluid requirements", "FOM1/FOM2/FOM3 definitions and Tier 1/Tier 2 thresholds, electrical and fire limits (as quoted on slides 7–8)"],
   ["EU REACH PFAS restriction (ECHA RAC/SEAC)", "status as of October 2026, slide 6"],
   ["Minnesota and Maine PFAS product laws", "category bans and 2032 broad prohibitions, slide 6"],
@@ -80,34 +89,34 @@ const HISTORY = [
 const QA = [
  {cat:"Thermal & hydraulics", icon:"🌡️", desc:"Figures of merit and the viscosity limit.",
   qs:[
-   {q:"Your viscosity is 15.4 mPa·s. OCP says ≤ 15. Doesn't Group III fail?",
+   {q:"Standard Group III is far thicker than 15 mPa·s. Doesn't it fail?",
     tags:["deck","calc"],
-    a:"On the reference grade, yes, by 0.4 mPa·s (about 3 %). That is why slide 9 says <b>NEAR LIMIT</b>, not pass. Base-oil viscosity is set by the distillation cut, so a slightly lighter grade clears 15 mPa·s and raises FOM1 at the same time. The price of a lighter cut is usually a lower flash point, so the real design window sits between FOM3 and the fire-safety gate.",
-    sandbox:"Viscosity lever → drag from 15.4 to 14.5 and watch FOM3 turn green."},
-   {q:"FOM1 ≈ 38 only clears Tier 1. Isn't Tier 2 where AI is heading?",
+    a:"Standard 4 cSt grades do: about 29 mPa·s at 25 °C and FOM1 ≈ 30–31, below Tier 1 (computed from CRC AVFL-37 measured data). The candidate is a <b>light 2 cSt cut</b>: 13.0 mPa·s, FOM1 37.2, FOM2 28.8, which passes. Viscosity is set by the distillation cut, so the grade choice decides the thermal result. The price of a lighter cut is a lower flash point (160 °C open cup for the wide 2 cSt grade), which is why the target is a <b>narrow C21–C25 cut</b> with the light tail removed.",
+    sandbox:"Preset → '4 cSt Group III' and watch FOM1 and FOM3 fail."},
+   {q:"FOM1 ≈ 37 only clears Tier 1. Isn't Tier 2 where AI is heading?",
     tags:["deck","calc"],
-    a:"Tier 1 (≥ 35) covers current server loads; Tier 2 (≥ 45) is for future loads. Using the slide-7 formula with other properties fixed, FOM1 reaches 45 at about <b>8.4 mPa·s</b>. The same scaling gives 50.8 at 5.5 mPa·s, which matches the top of the literature range (51). Tier 2 is within reach of a lighter hydrocarbon grade, at the flash-point cost noted above.",
-    sandbox:"Viscosity lever → drag down to 8.4 mPa·s."},
+    a:"Tier 1 (≥ 35) covers current server loads; Tier 2 (≥ 45) is for future loads. Holding other properties fixed, FOM1 reaches 45 at about <b>6.6 mPa·s</b> at 25 °C. But OCP plans to move the FOM1 reference to 50 °C, closer to real bath temperatures; at 50 °C this fluid computes to about <b>46</b>, which is Tier 2.",
+    sandbox:"Viscosity lever → drag down to 6.6 mPa·s."},
    {q:"Why single-phase at all? Boiling removes far more heat.",
     tags:["deck","scope"],
     a:"Two-phase handles the highest heat fluxes, which is its real strength. It also needs a sealed tank, a condenser, pressure control and make-up for vapour loss, and today's two-phase fluids are fluorinated, with the PFAS exposure that brings. Single-phase hydrocarbons run in an open bath with a pump and CDU. We do not claim single-phase wins at every heat flux; we claim it covers the 100–250+ kW rack band at much lower fluid cost."}]},
  {cat:"Electrical & signal integrity", icon:"⚡", desc:"A fluid that touches every trace.",
   qs:[
-   {q:"Dk 2.0–2.3 against a limit of < 2.3 — you're on the line.",
+   {q:"What is Group III's dielectric constant at server frequencies?",
     tags:["deck","scope"],
-    a:"The upper end touches the limit, so the slide reads <b>PROMISING / TEST HF</b>. Dk must be measured at the high frequencies modern server links use, and across operating temperature. Until then the scorecard keeps it amber."},
+    a:"No public Group III value at 20–40 GHz was found. OCP's own chart puts hydrocarbon-family liquids between Dk 2.0 and 2.3, with several at the 2.3 limit, so Dk has to be <b>measured</b> at the high frequencies modern links use, and across temperature. The scorecard marks it <b>TO TEST</b>."},
    {q:"Df and resistivity aren't on your slides.",
     tags:["deck","scope"],
     a:"Correct. The slides give the OCP limits (Df ≤ 0.05; resistivity ≥ 2.0 GΩ·m new) but no Group III value, so the scorecard marks both <b>to be measured</b>. Stage 1 of the roadmap measures them; stage 2 ageing tracks how they drift as the fluid oxidises or picks up moisture."},
-   {q:"Dielectric strength 8–24 kV/mm is a wide spread.",
-    tags:["deck","std"],
-    a:"Breakdown strength of insulating oils depends strongly on dissolved water and particles, so reported ranges are wide. Even the low end, 8 kV/mm, clears the 6 kV/mm gate. In service, drying and filtration keep it there."}]},
+   {q:"Is dielectric strength a concern?",
+    tags:["std","scope"],
+    a:"It is not published for this grade, so it is <b>TO TEST</b> (ASTM D1816, 1 mm). Hydrocarbon-family liquids in OCP's chart span roughly 8–24 kV/mm against a 6 kV/mm gate, and breakdown strength depends strongly on dissolved water and particles, so drying and filtration matter in service. Measured volume resistivity, by contrast, is about 12,400 GΩ·m, far above the 2 GΩ·m gate."}]},
  {cat:"Fire safety", icon:"🔥", desc:"Hydrocarbons burn; fluorinated fluids don't.",
   qs:[
-   {q:"Your 220 °C flash point is open cup. OCP wants closed cup.",
-    tags:["deck","std"],
-    a:"Right. 220 °C is a Cleveland open-cup value on a reference grade. Closed-cup methods usually read lower, so the margin over 150 °C has to be demonstrated, not assumed. The scorecard shows <b>CLOSED-CUP TEST</b> until that measurement exists.",
-    sandbox:"Tick 'Flash point measured closed-cup' to see the gate turn green when the value is real."},
+   {q:"A light cut that passes viscosity has a low flash point. How do you meet both?",
+    tags:["deck","calc","scope"],
+    a:"With a <b>narrow cut, C21–C25</b>: cut the light tail for flash point <i>and</i> the heavy end for viscosity. Removing only the light tail raises viscosity past the limit (simulated μ25 12.7 → 16.9 mPa·s). The wide 2 cSt cut sold today has a light tail: 160 °C open cup, close to the 150 °C closed-cup gate. Commercial narrow-cut isoparaffinic fluids of the <b>same viscosity</b> (KV40 9.6–9.8 cSt) reach <b>184–191 °C closed cup</b>. A refinery Group III boils slightly lower at equal viscosity, so the target cut is estimated at <b>163–189 °C closed cup</b>: a margin over 150 °C, still to be confirmed by ASTM D93.",
+    sandbox:"Switch the preset between 'Wide 2 cSt cut', 'target narrow cut' and '4 cSt' to see the window."},
    {q:"Why put a combustible oil in a data hall when fluorinated fluids don't burn?",
     tags:["deck","scope"],
     a:"Non-flammability is a genuine strength of fluorinated fluids (slide 6). For hydrocarbons, the gates are flash point ≥ 150 °C closed cup and autoignition ≥ 300 °C, both far above bath operating temperatures. Acceptance by the local fire code for each site is outside this study."}]},
@@ -136,7 +145,7 @@ const QA = [
 // ---------------- state ----------------
 const S = {};
 function resetState(){
-  Object.assign(S, {rack:120, preset:"g3", mu:15.4, me:DECK.gw.me, in:DECK.gw.in, share:100, int:DECK.lPerKW, price:3.5});
+  Object.assign(S, {rack:120, preset:"g3", mu:13.0, me:DECK.gw.me, in:DECK.gw.in, share:100, int:DECK.lPerKW, price:3.5});
   loadPreset("g3");
 }
 function loadPreset(k){
@@ -172,11 +181,14 @@ function gates(){
   if(f.flash==null) add("Safety","Flash point","—","≥ 150 °C closed cup","test","not reported");
   else{
     const ok = f.flash>=DECK.flashMin;
-    add("Safety","Flash point",fmt(f.flash,0)+" °C "+(f.cc?"closed cup":"open cup"),"≥ 150 °C closed cup",
+    if(f.flashEst){ add("Safety","Flash point","≈ "+fmt(f.flash,0)+"–"+(f.flashHi||185)+" °C closed cup (est.)","≥ 150 °C closed cup",
+        f.flash>=DECK.flashMin?"test":"fail","estimate for the target narrow cut — measure ASTM D93"); }
+    else add("Safety","Flash point",(f.flashLt?"< ":"")+fmt(f.flash,0)+" °C "+(f.cc?"closed cup":"open cup"),"≥ 150 °C closed cup",
         !ok?"fail":f.cc?"pass":"test", ok&&!f.cc?"open-cup value — closed-cup test needed":"");
   }
   if(f.ait==null) add("Safety","Autoignition temperature","—","≥ 300 °C","test","not reported");
-  else add("Safety","Autoignition temperature",fmt(f.ait,0)+" °C","≥ 300 °C",f.ait>=DECK.aitMin?"pass":"fail");
+  else add("Safety","Autoignition temperature",(f.aitLt?"> ":"")+fmt(f.ait,0)+" °C","≥ 300 °C",
+      f.ait>=DECK.aitMin?"pass":(f.aitLt?"test":"fail"), f.aitLt&&f.ait<DECK.aitMin?"published lower bound only — measure ASTM E659":"");
   return out;
 }
 const STLABEL = {pass:"PASS", near:"NEAR LIMIT", test:"TO TEST", fail:"FAIL"};
@@ -221,7 +233,7 @@ function renderScore(){
 
 function renderMu(){
   const svg=$("muChart"); svg.innerHTML="";
-  const L=34,R=310,T=10,B=165, x0=4,x1=25,y0=20,y1=60;
+  const L=34,R=310,T=10,B=165, x0=4,x1=35,y0=20,y1=60;
   const sx=v=>L+(R-L)*(v-x0)/(x1-x0), sy=v=>B-(B-T)*(Math.max(y0,Math.min(y1,v))-y0)/(y1-y0);
   if(S.fluid.fom1==null){txt(svg,160,90,"FOM1 not reported for this preset",{class:"tick","text-anchor":"middle"});return;}
   // feasible window: mu <= 15 and FOM1 >= 35
@@ -229,7 +241,7 @@ function renderMu(){
   const winHi=Math.min(DECK.muMax,muT1);
   if(winHi>x0) svg.appendChild(svgEl("rect",{x:sx(muLo),y:T,width:sx(winHi)-sx(muLo),height:B-T,fill:"#e9f6ea"}));
   for(let v=y0;v<=y1;v+=10){svg.appendChild(svgEl("line",{x1:L,x2:R,y1:sy(v),y2:sy(v),class:"grid"}));txt(svg,L-4,sy(v)+3,v,{class:"tick","text-anchor":"end"});}
-  for(let v=5;v<=25;v+=5){txt(svg,sx(v),B+11,v,{class:"tick","text-anchor":"middle"});}
+  for(let v=5;v<=35;v+=5){txt(svg,sx(v),B+11,v,{class:"tick","text-anchor":"middle"});}
   txt(svg,(L+R)/2,B+22,"μ at 25 °C (mPa·s)",{class:"tick","text-anchor":"middle"});
   txt(svg,8,(T+B)/2,"FOM1",{class:"tick",transform:`rotate(-90 8 ${(T+B)/2})`,"text-anchor":"middle"});
   [[DECK.fom1T1,"Tier 1 ≥ 35","#4A6FA5"],[DECK.fom1T2,"Tier 2 ≥ 45","#2E7D32"]].forEach(([v,l,c])=>{
@@ -241,7 +253,7 @@ function renderMu(){
   svg.appendChild(svgEl("path",{d,fill:"none",stroke:"#14213D","stroke-width":2.2}));
   const f=fom1At(S.mu);
   svg.appendChild(svgEl("circle",{cx:sx(S.mu),cy:sy(f),r:5,fill:"#C84C3A",stroke:"#fff","stroke-width":1.5}));
-  txt(svg,sx(S.mu)+(S.mu>20?-6:7),sy(f)-7,`${fmt(S.mu,1)} mPa·s → FOM1 ${fmt(f,1)}`,{class:"curvelbl","text-anchor":S.mu>20?"end":"start",fill:"#C84C3A"});
+  txt(svg,sx(S.mu)+(S.mu>26?-6:7),sy(f)-7,`${fmt(S.mu,1)} mPa·s → FOM1 ${fmt(f,1)}`,{class:"curvelbl","text-anchor":S.mu>26?"end":"start",fill:"#C84C3A"});
 }
 
 function renderMarket(){
@@ -287,6 +299,8 @@ function buildFluidFields(){
   FIELDS.forEach(([k])=>$("f_"+k).addEventListener("input",e=>{
     const v=e.target.value.trim(); S.fluid[k]= v===""?null:+v;
     if(k==="fom1") S.fluid.mu0=S.mu;   // a typed FOM1 is taken at the current viscosity
+    if(k==="ait") S.fluid.aitLt=false;
+    if(k==="flash"){ S.fluid.flashLt=false; S.fluid.flashEst=false; }   // a typed flash point is a measured value
     render();}));
   $("flashCC").checked=!!S.fluid.cc;
 }

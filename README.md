@@ -29,7 +29,7 @@ Every value is tagged:
 - **CALC**: computed in the page from deck numbers (e.g. FOM1 ∝ μ<sup>−0.2813</sup> with other properties fixed; 3.9 GW × 10 L/kW × 0.82 kg/L);
 - **STD**: textbook physics and standard definitions (API base-oil groups, flash-point methods).
 
-Group III values are literature and reference-grade figures. **No laboratory measurement of a
+The Group III preset uses public measured data for a commercial 2 cSt Group III base oil (CRC Report AVFL-37, SwRI 2022; producer TDS). **No laboratory measurement of a
 production coolant is shown, and nothing here is a qualified product.** The page is static HTML/JS and
 runs entirely in the browser.
 

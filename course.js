@@ -57,29 +57,30 @@ const LESSONS = [
  body:`<p>Slide 7 ${T.deck}:</p>
  <p>• Hydrocarbon base oils in the literature: <b>FOM1 38–51</b>, <b>FOM2 31–32</b>, <b>μ 5.5–15 mPa·s</b><br>
  • OCP: FOM1 <b>Tier 1 ≥ 35</b> (current servers), <b>Tier 2 ≥ 45</b> (future servers); FOM2 &gt; 19; μ ≤ 15 mPa·s<br>
- • Group III: <b>FOM1 ≈ 38</b>, <b>FOM2 ≈ 31</b>, <b>μ<sub>25</sub> ≈ 15.4 mPa·s</b></p>
- <p>Thermally, Group III is <b>Tier 1</b> and well above the forced-convection bar. Viscosity is <b>0.4 mPa·s over</b> the limit.</p>`},
+ • Group III, 2 cSt (computed from CRC AVFL-37 measured data): <b>FOM1 37.2</b>, <b>FOM2 28.8</b>, <b>μ<sub>25</sub> 13.0 mPa·s</b> ${T.calc}<br>
+ • Group III, 4 cSt: FOM1 ≈ 30–31, μ<sub>25</sub> ≈ 29 mPa·s ${T.calc}</p>
+ <p>The light 2 cSt grade is <b>Tier 1</b> and passes the viscosity limit; standard 4 cSt grades fail both. The grade, not the base-oil family, decides the result.</p>`},
 
 {ch:"B · Figures of merit", title:"The viscosity lever",
  body:`<p>Hold every other property fixed and FOM1 scales as μ<sup>−0.2813</sup>: ${T.calc}</p>
- <div class="eqn">FOM1(<i>μ</i>) ≈ 38 · (15.4 / <i>μ</i>)<sup>0.2813</sup></div>
- <p>• μ = 15.0 → FOM1 ≈ 38.3 (FOM3 now passes)<br>
- • μ = 8.4 → FOM1 ≈ 45 (Tier 2)<br>
- • μ = 5.5 → FOM1 ≈ 50.8, matching the literature's 51</p>
+ <div class="eqn">FOM1(<i>μ</i>) ≈ 37.2 · (13.0 / <i>μ</i>)<sup>0.2813</sup></div>
+ <p>• μ = 17.2 (3 cSt grade) → FOM1 ≈ 34.4, just below Tier 1 (34.7 from its own measured data)<br>
+ • μ = 29 (4 cSt grade) → FOM1 ≈ 29.7 (30–31 from measured data)<br>
+ • μ = 6.6 → FOM1 ≈ 45 (Tier 2)</p>
  <div class="litnote">Real lighter grades also change <i>k</i>, <i>ρ</i>, <i>c</i><sub>p</sub> and <i>β</i>, so this is a first-order guide, not a prediction for a specific fluid.</div>`,
  check:{q:"Roughly what viscosity reaches Tier 2 (FOM1 = 45)?",
-   opts:[{t:"About 12 mPa·s"},{t:"About 8.4 mPa·s",ok:true},{t:"About 3 mPa·s"}],
-   reveal:"15.4 × (38/45)^(1/0.2813) ≈ 8.4 mPa·s."}},
+   opts:[{t:"About 12 mPa·s"},{t:"About 6.6 mPa·s",ok:true},{t:"About 2 mPa·s"}],
+   reveal:"13.0 × (37.2/45)^(1/0.2813) ≈ 6.6 mPa·s."}},
 
 // ===================== PART C — ELECTRICAL =====================
 {ch:"C · Electrical", title:"Dk and Df: the fluid touches every trace",
  body:`<p>In air, a high-speed signal trace sees a dielectric constant near 1 above it. Immerse the board and the fluid replaces that air. ${T.std}</p>
  <p>• <b>Dielectric constant Dk</b>: raises the effective permittivity around the trace, which slows signals (speed ∝ 1/√Dk<sub>eff</sub>) and shifts impedance. OCP limit <b>Dk &lt; 2.3</b>. ${T.deck}<br>
  • <b>Loss tangent Df</b>: the fraction of signal energy the fluid absorbs as heat. OCP limit <b>Df ≤ 0.05</b>. ${T.deck}</p>
- <p>Group III reads <b>Dk 2.0–2.3</b>: fine at the low end, on the line at the high end. Hence "TEST HF": Dk has to be measured at the high frequencies modern links use.</p>`},
+ <p>No public Group III value at 20–40 GHz exists. OCP's chart puts hydrocarbon-family liquids at <b>Dk 2.0–2.3</b>, several on the limit, so Dk has to be <b>measured</b> at the high frequencies modern links use.</p>`},
 
 {ch:"C · Electrical", title:"Insulation: strength and resistivity",
- body:`<p>• <b>Dielectric strength</b>: the field at which the fluid breaks down and arcs. OCP: <b>≥ 6 kV/mm</b>. Group III: <b>8–24 kV/mm</b>. ${T.deck}<br>
+ body:`<p>• <b>Dielectric strength</b>: the field at which the fluid breaks down and arcs. OCP: <b>≥ 6 kV/mm</b>. Not published for the 2 cSt grade; hydrocarbon-family liquids in OCP's chart span about 8–24 kV/mm. ${T.deck}<br>
  • <b>Volume resistivity</b>: resistance to leakage current through the fluid. OCP: <b>≥ 2.0 GΩ·m</b> when new. ${T.deck}</p>
  <p>Both are very sensitive to <b>dissolved water and particles</b>, which is why reported breakdown values spread so widely and why in-service drying and filtration matter. ${T.std}</p>
  <div class="defends">You can now answer: <i>"Why is the strength range so wide?"</i> Moisture and particulates, not the base molecule.</div>`},
@@ -89,10 +90,10 @@ const LESSONS = [
  body:`<p>• <b>Flash point</b>: the lowest temperature at which vapour above the liquid ignites briefly from an external flame. OCP: <b>≥ 150 °C, closed cup</b>. ${T.deck}<br>
  • <b>Autoignition temperature</b>: ignition with no flame at all. OCP: <b>≥ 300 °C</b>. ${T.deck}</p>
  <p>Open-cup methods (Cleveland, COC) let vapour escape, so they usually read <b>higher</b> than closed-cup methods (e.g. Pensky-Martens). ${T.std}</p>
- <p>Group III's <b>220 °C</b> is a COC value on a reference grade. The margin over 150 °C looks large, but it has to be shown closed-cup. That is the third open item on the scorecard.</p>`,
- check:{q:"A fluid reads 160 °C open cup. Is the OCP flash gate met?",
+ <p>The wide 2 cSt Group III sold today is <b>160 °C</b> open cup on its producer's safety data sheet. Closed cup reads lower, against the 150 °C closed-cup gate. A <b>narrow C21–C25 cut</b> is estimated at 163–189 °C closed cup: narrow-cut isoparaffinic fluids of the same viscosity reach 184–191 °C. ${T.calc}</p>`,
+ check:{q:"A fluid reads 165 °C open cup. Is the OCP flash gate met?",
    opts:[{t:"Yes, 160 > 150"},{t:"Not proven: closed cup will likely read lower",ok:true}],
-   reveal:"The gate is defined closed-cup. A 10 °C open-cup margin can disappear on a closed-cup test."}},
+   reveal:"The gate is defined closed-cup. A 15 °C open-cup margin can disappear on a closed-cup test (one immersion fluid reads 202 °C open cup vs 184 °C closed cup)."}},
 
 {ch:"D · Fire & environment", title:"The PFAS wall",
  body:`<p>Fluorinated fluids led early immersion because they are <b>non-flammable</b>, <b>inert</b>, <b>low-Dk</b> and can <b>boil</b> for two-phase cooling. ${T.deck}</p>
@@ -116,16 +117,19 @@ const LESSONS = [
  body:`<p>Viscosity and flash point are both set largely by <b>molecular size and boiling range</b>. ${T.std}</p>
  <p>• A lighter cut → lower viscosity → better FOM1 and FOM3<br>
  • A lighter cut → more volatile molecules → <b>lower flash point</b>, higher evaporation loss</p>
- <p>So the engineering target is a <b>window</b>: light enough to sit under 15 mPa·s (ideally lighter for Tier 2), heavy enough to stay well above 150 °C closed cup. A <b>narrow</b> boiling range helps, because it removes the light tail that drags the flash point down without adding much to viscosity.</p>
+ <p>So the engineering target is a <b>window</b>, and public data put it at a <b>narrow cut of about C21–C25</b> ${T.calc}:</p>
+ <p>• Viscosity: μ25 ≤ 15 mPa·s needs KV100 ≤ 2.8 cSt; a light base oil of that viscosity boils about 356–417 °C (5–95 %), i.e. roughly C21–C25.<br>
+ • Flash point: remove the tail below C21, <b>and</b> the heavy end above C25, because the light molecules were thinning the oil (simulated μ25 rises from 12.7 to 16.9 mPa·s if only the light tail is cut). Narrow-cut isoparaffinic fluids at the same viscosity reach 184–191 °C closed cup; a refinery Group III is estimated at 163–189 °C.<br>
+ • A heavier C25–C35 cut (4 cSt) is fire-safe but fails viscosity (≈ 29 mPa·s) and Tier 1 (≈ 31).</p>
  <div class="defends">Try it in the simulator: the viscosity lever shows the thermal side of this window.</div>`},
 
 {ch:"E · Group III", title:"The full scorecard",
  body:`<p>Slide 9 ${T.deck}:</p>
- <p>• <b>Thermal</b>: FOM1 ≈ 38, FOM2 ≈ 31 vs ≥ 35, &gt; 19 → <b>PROMISING</b><br>
- • <b>Viscosity</b>: μ<sub>25</sub> ≈ 15.4 vs ≤ 15 mPa·s → <b>NEAR LIMIT</b><br>
- • <b>Electrical &amp; signal</b>: Dk 2.0–2.3, 8–24 kV/mm vs Dk &lt; 2.3, ≥ 6 kV/mm → <b>PROMISING / TEST HF</b><br>
- • <b>Safety &amp; environment</b>: flash ≥ 220 °C (COC, reference grade), autoignition 300–370 °C, no PFAS vs ≥ 150 °C closed cup, ≥ 300 °C → <b>CLOSED-CUP TEST</b></p>
- <p>Df and resistivity are not yet reported for Group III. Every value here is literature or reference-grade: a <b>screening</b> result.</p>`},
+ <p>• <b>Thermal</b>: FOM1 37.2, FOM2 28.8 vs ≥ 35, &gt; 19 → <b>PASS</b><br>
+ • <b>Viscosity</b>: μ<sub>25</sub> 13.0 vs ≤ 15 mPa·s → <b>PASS</b><br>
+ • <b>Electrical</b>: resistivity ≈ 12,400 GΩ·m vs ≥ 2 → <b>PASS</b>; Dk/Df and dielectric strength → <b>TO TEST</b><br>
+ • <b>Safety &amp; environment</b>: target narrow cut ≈ 163–189 °C closed cup (estimate) vs ≥ 150 °C → <b>CONFIRM BY TEST</b>; autoignition → <b>TO TEST</b>; no PFAS</p>
+ <p>Values come from public measured data for one commercial 2 cSt Group III base oil: a <b>screening</b> result, not a qualified product.</p>`},
 
 // ===================== PART F — PROOF AND BUSINESS =====================
 {ch:"F · Proof & business", title:"Three-stage qualification",
@@ -146,8 +150,8 @@ const LESSONS = [
 
 {ch:"F · Proof & business", title:"Defending the case",
  body:`<p>The honest summary for a sceptical audience:</p>
- <p>• <b>Strong</b>: Tier 1 thermal performance, FOM2 well above the bar, good dielectric strength, no PFAS, refinery-made at a fraction of the fluorinated price.<br>
- • <b>Open</b>: viscosity 0.4 mPa·s over the limit; Dk at high frequency; closed-cup flash point; Df and resistivity; material compatibility.<br>
+ <p>• <b>Strong</b>: Tier 1 thermal performance and viscosity pass for a 2 cSt cut, very high resistivity, no PFAS, refinery-made at a fraction of the fluorinated price.<br>
+ • <b>Open</b>: closed-cup flash point (critical for the light grade); Dk/Df at high frequency; dielectric strength; autoignition; material compatibility.<br>
  • <b>Plan</b>: characterise → age → validate on real components.</p>
  <div class="defends">The claim is "promising candidate with a clear test plan", not "qualified coolant". Hold that line and every hard question has an answer.</div>`},
 ];

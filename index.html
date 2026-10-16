@@ -62,8 +62,8 @@
 
     <div class="grp">
       <h3>③ Viscosity lever <span class="hint">(lighter cut → lower μ)</span></h3>
-      <label>Dynamic viscosity at 25 °C: <b id="muVal">15.4 mPa·s</b>
-        <input type="range" id="mu" min="4" max="25" step="0.1" value="15.4">
+      <label>Dynamic viscosity at 25 °C: <b id="muVal">13.0 mPa·s</b>
+        <input type="range" id="mu" min="4" max="35" step="0.1" value="13.0">
         <span class="src calc">CALC from DECK slide 7 formula</span>
       </label>
       <div class="assume">FOM1 scales as μ<sup>−0.2813</sup> with every other property held fixed. Real lighter cuts also shift k, ρ, c<sub>p</sub> and β, and usually <b>lower the flash point</b>.</div>
@@ -141,7 +141,7 @@
 <footer id="refs">
   <h3>Sources — every number is tagged DECK (printed on the ADIPEC 2026 slides), CALC (computed here from deck numbers) or STD (textbook definition)</h3>
   <div id="reflist"></div>
-  <p class="fine">No laboratory measurement of a production coolant is shown here. Group III values are literature and reference-grade figures, as on the slides. The page runs entirely in your browser. B. Chiramel · ADIPEC 2026.</p>
+  <p class="fine">No laboratory measurement of a production coolant is shown here. The Group III preset uses public measured data for a commercial 2 cSt Group III base oil (CRC AVFL-37, SwRI 2022). The page runs entirely in your browser. B. Chiramel · ADIPEC 2026.</p>
 </footer>
 
 <script src="story.js"></script>
