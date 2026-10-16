@@ -1,0 +1,12 @@
+# Measured base-oil properties from CRC Report AVFL-37 (Southwest Research Institute for the Coordinating Research Council, May 2022)
+# https://crcao.org/wp-content/uploads/2022/05/CRC-Project-AVFL-37-Final-Report_May-2022.pdf  Tables 5 (D445), 6 (D4052), 7 (D7896), 8 (E1269), 9 (D1169)
+# Factual data reproduced for research use with citation. Resistivity only transcribed for the 2 cSt Group III.
+name,kv40_cSt,kv100_cSt,rho40_g_mL,rho60_g_mL,k0_W_mK,k40_W_mK,k70_W_mK,cp40_J_gK,cp70_J_gK,resistivity25_ohm_cm
+Group III A 4 cSt (UltraS),19.642,4.267,0.8188,0.8061,0.1396,0.1364,0.1340,1.689,1.758,
+Group III B 2 cSt (Yubase),9.435,2.547,0.8192,0.8061,0.1312,0.1264,0.1229,1.802,1.896,1.24E+15
+Group III B 3 cSt (Yubase),12.193,3.078,0.8171,0.8042,0.1314,0.1286,0.1265,1.834,1.918,
+Group III B 4 cSt (Yubase),19.192,4.186,0.8183,0.8056,0.1394,0.1361,0.1337,1.802,1.875,
+Group III+ A 4 cSt (GTL XHVI),17.948,4.092,0.8006,0.7879,0.1464,0.1408,0.1366,1.870,1.933,
+Group III+ B 4 cSt (VHVI),19.003,4.268,0.8118,0.7992,0.1438,0.1391,0.1356,1.894,2.002,
+Group IV PAO 3 cSt,8.109,2.393,0.7896,0.7766,0.1453,0.1389,0.1340,1.874,1.942,
+Group IV PAO 5 cSt,24.588,5.169,0.8082,0.7956,0.1534,0.1481,0.1440,1.906,1.969,

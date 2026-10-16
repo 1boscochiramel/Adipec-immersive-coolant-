@@ -1,6 +1,6 @@
 """Thin pythonnet wrapper around DWSIM 9.0.5 petroleum-characterisation methods."""
 import os, sys, io, contextlib
-DW = r"C:\Users\Admin\AppData\Local\DWSIM"
+DW = os.environ.get("DWSIM_DIR", os.path.join(os.environ.get("LOCALAPPDATA", ""), "DWSIM"))   # DWSIM 9.0.5 folder
 _cwd = os.getcwd(); os.chdir(DW); sys.path.append(DW)
 import clr
 clr.AddReference(os.path.join(DW, "DWSIM.Thermodynamics.dll"))

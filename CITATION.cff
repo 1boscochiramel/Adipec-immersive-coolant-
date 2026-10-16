@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this toolkit, data or results, please cite it as below."
+title: "immersion-screen: open screening of hydrocarbon single-phase immersion coolants against OCP requirements"
+version: 0.1.0
+date-released: 2026-10-16
+authors:
+  - family-names: Chiramel
+    given-names: Bosco
+license: MIT
+repository-code: "https://github.com/1boscochiramel/Adipec-immersive-coolant-"
+url: "https://1boscochiramel.github.io/Adipec-immersive-coolant-/"
+keywords: [immersion cooling, dielectric coolant, Group III base oil, Open Compute Project, figures of merit, flash point, data centre]
+references:
+  - type: report
+    title: "Thermal and Electrical Properties of Lubricants for HEV/EV Applications (CRC Report AVFL-37)"
+    authors: [{name: "Coordinating Research Council / Southwest Research Institute"}]
+    year: 2022
+  - type: standard
+    title: "Base Specification for Immersion Fluids, Revision 1.0"
+    authors: [{name: "Open Compute Project"}]
+    year: 2022

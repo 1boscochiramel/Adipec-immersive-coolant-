@@ -1,0 +1,12 @@
+# Public fire-safety data for light hydrocarbon base oils and immersion fluids (values as printed by the source; typical unless stated)
+fluid,kv40_cSt,flash_C,flash_method,fire_C,autoignition_C,source
+SK YUBASE 2 (wide 2 cSt Group III cut),8.6,160,ASTM D92 open cup,,>260,https://nextsds.com/sds/en/281331501271740/yubase-2
+YUBASE 2 (Repsol/RLESA TDS),12 (typ.),<170,ASTM D92 open cup,,,https://www.repsol.com/content/dam/repsol-corporate/en_gb/productos-y-servicios/especialidades/base_oils_gii_giii_tcm14-19328.pdf
+YUBASE 3 (SK SDS),12.3,200,open cup,,>290,https://nextsds.com/sds/en/281331501271244/yubase-3
+YUBASE 4 (Repsol/RLESA TDS),20 (typ.),200-230,ASTM D92 open cup,,,https://www.repsol.com/content/dam/repsol-corporate/en_gb/productos-y-servicios/especialidades/base_oils_gii_giii_tcm14-19328.pdf
+Shell Diala S4 ZX-I (GTL transformer oil),9.6,184-191,PMCC (ISO 2719) closed cup,,,Shell TDS and 2024 certificate of analysis
+Shell Immersion Cooling Fluid S5 X (GTL),9.8,200,ISO 2592 open cup,220,355 (TDS); >320 (SDS),https://industrialfluidsmfg.twinoils.com/Asset/Shell%20Immersion%20Cooling%20Fluid%20S5%20X.pdf
+Chevron Phillips Synfluid PAO 2.5,8.3,178,open cup,,,https://www.cpchem.com/sites/default/files/2024-04/Synfluid%20Bro_ExtremePerformance.pdf
+Chevron Phillips Synfluid PAO 2,5.1,159,open cup,178,,https://www.cpchem.com/sites/default/files/2020-04/Synfluid%2520PAO%25202%2520cSt_0_0.pdf
+n-hexadecane (pure),,126.6,closed cup (database),,202,chemicals library / HSDB
+squalane (pure C30 isoparaffin),,209.7,closed cup (database),,,chemicals library

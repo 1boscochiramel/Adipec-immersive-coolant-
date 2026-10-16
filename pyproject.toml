@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "immersion-screen"
+version = "0.1.0"
+description = "Open screening toolkit for hydrocarbon single-phase immersion coolants against Open Compute Project (OCP) requirements"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT (code); CC BY 4.0 (data and text)"}
+authors = [{name = "Bosco Chiramel"}]
+keywords = ["immersion cooling", "dielectric fluid", "base oil", "Group III", "OCP", "data centre", "petroleum characterisation"]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+immersion-screen = "immersion_screen.__main__:main"
+
+[tool.setuptools]
+packages = ["immersion_screen"]
