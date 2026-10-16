@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation Results &amp; Spec Sheets</title>
+<meta name="description" content="Cut simulation of a Group III narrow cut (C21–C25) and filled OCP immersion-fluid spec sheets, built from public data.">
+<link rel="stylesheet" href="style.css">
+<style>
+main{max-width:900px;display:block}
+.res h2{color:var(--navy);font-size:19px;margin:18px 0 6px}
+.res p{font-size:14.5px;margin:0 0 10px}
+.res table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.res th{background:var(--navy);color:#fff;text-align:left;padding:6px 7px;font-size:12px}
+.res td{border-bottom:1px solid #eee;padding:6px 7px}
+.res tr.tgt td{background:#e9f6ea;font-weight:700}
+.res img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+.dl{display:grid;gap:8px}
+.dl a{display:block;background:#fff;border:1px solid var(--line);border-left:5px solid var(--cond);border-radius:9px;padding:9px 12px;text-decoration:none;color:#1a2233}
+.dl a b{color:var(--navy)} .dl a span{display:block;font-size:12.5px;color:var(--grey)}
+.back{color:#cfeefc;font-size:13px;font-weight:700;text-decoration:none}
+.tablewrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">ADIPEC 2026 · simulation results</div>
+  <h1>Can a narrow Group III cut meet both viscosity and flash point?</h1>
+  <a class="back" href="index.html">← back to the simulator</a>
+</header>
+<main class="res">
+  <p><b>Short answer: yes, in simulation.</b> A narrow cut of about <b>C21–C25</b> meets the OCP viscosity limit
+  (μ25 ≈ 13.6 mPa·s vs ≤ 15), Tier 1 natural convection (FOM1 ≈ 36.8 vs ≥ 35) and the closed-cup flash gate
+  (≈ 163–189 °C vs ≥ 150 °C). Removing only the light tail is not enough: it raises viscosity past the limit, so the
+  heavy end must be cut too.</p>
+  <p class="assume">This is a computational screening from public data, not a measurement of a real cut. Closed-cup
+  flash (ASTM D93), autoignition (ASTM E659), Dk/Df and dielectric strength still need laboratory tests.</p>
+
+  <h2>Design window</h2>
+  <img src="simulation/fig_window_map.png" alt="Simulated viscosity versus closed-cup flash point for narrow cuts C19–C28, with the OCP limits">
+  <p class="chartlegend">Each bar spans the conservative to raw flash estimate; green cuts meet μ25 ≤ 15, FOM1 ≥ 35 and flash ≥ 150 °C.</p>
+
+  <h2>Window scan</h2>
+  <div class="tablewrap"><table id="scan"><thead><tr><th>Cut</th><th>μ25 (mPa·s)</th><th>FOM1</th><th>KV100 (cSt)</th><th>Closed-cup flash (°C)</th><th>Meets gates</th></tr></thead><tbody></tbody></table></div>
+  <p class="chartlegend">Flash range = conservative (calibrated to a wide commercial 2 cSt cut) to raw model. An independent cross-check with real n-alkane vapour-pressure data gives 189 °C for C21–C25 and 192 °C for C21–C26, hence the 163–189 °C quoted on the slide.</p>
+
+  <h2>How it was simulated</h2>
+  <p>The cut's boiling curve is split into 20 pseudo-components. <b>DWSIM 9.0.5</b>'s own petroleum methods give each one's
+  molecular weight and critical properties (Riazi–Daubert), acentric factor (Lee–Kesler) and viscosity (Abbott).
+  Viscosities are blended by the Refutas method; vapour pressures (Lee–Kesler) and Jones-rule flammability limits give the
+  closed-cup flash point by Le Chatelier's rule. The flash route was cross-checked with real n-alkane vapour-pressure data
+  (<code>thermo</code> library).</p>
+  <p><b>Validation:</b> n-hexadecane flash 128 vs 127 °C; squalane 218 vs 210 °C; measured 2 cSt Group III μ25 13.3 vs 13.0 mPa·s;
+  narrow-cut GTL fluid 189 vs 184–191 °C closed cup. A wide 2 cSt cut reads ~22 °C high (its real light tail is unknown), which sets the conservative end of each flash range.</p>
+
+  <h2>Downloads</h2>
+  <div class="dl">
+    <a href="data/OCP_Fluid_Speclist_GroupIII_TargetCut_C21-C25.xlsx"><b>OCP Fluids Speclist — target narrow cut C21–C25</b>
+      <span>OCP Rev 2.1 template. Thermal values measured (CRC AVFL-37); fire-safety and dielectric values are labelled ESTIMATE with basis.</span></a>
+    <a href="data/OCP_Fluid_Speclist_GroupIII_2cSt_PublicData.xlsx"><b>OCP Fluids Speclist — 2 cSt Group III, measured public data only</b>
+      <span>Every value from CRC AVFL-37 or the producer data sheet; anything not public reads "Not measured".</span></a>
+    <a href="simulation/GroupIII_Cut_Simulation_Report.pdf"><b>Cut simulation report (PDF, 2 pages)</b>
+      <span>Method, validation, scenarios, window scan and limits.</span></a>
+    <a href="simulation/scan_window.md"><b>Window scan table</b><span>Markdown; JSON in simulation/scan_window.json.</span></a>
+    <a href="https://github.com/1boscochiramel/Adipec-immersive-coolant-/tree/main/simulation"><b>Model scripts (Python + DWSIM)</b>
+      <span>dw.py, cutmodel.py, sim_cut.py, scan_window.py, crosscheck_flash.py — requires DWSIM 9.0.5 on Windows and pythonnet.</span></a>
+  </div>
+
+  <p class="fine">Sources: CRC Report AVFL-37 (Southwest Research Institute, 2022); OCP Base Specification for Immersion Fluids (2022) and Immersion Requirements Rev 2.1 (2023);
+  Chevron patent US7846880B2; Shell Diala S4 ZX-I and S5 X data sheets; SK Lubricants YUBASE 2 SDS. B. Chiramel · ADIPEC 2026.</p>
+</main>
+<script>
+fetch("simulation/scan_window.json").then(r=>r.json()).then(rows=>{
+  const tb=document.querySelector("#scan tbody");
+  tb.innerHTML=rows.map(r=>`<tr class="${r.cut==="C21-C25"?"tgt":""}"><td>${r.cut.replace("-","–")}${r.cut==="C21-C25"?" (target)":""}</td><td>${r.mu25.toFixed(1)}</td><td>${r.fom1.toFixed(1)}</td><td>${r.kv100.toFixed(2)}</td><td>${r.flash_lo.toFixed(0)}–${r.flash_hi.toFixed(0)}</td><td>${r.ok?"yes":"no"}</td></tr>`).join("");
+}).catch(()=>{document.querySelector("#scan tbody").innerHTML='<tr><td colspan="6">See simulation/scan_window.md</td></tr>';});
+</script>
+</body>
+</html>

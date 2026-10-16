@@ -21,6 +21,13 @@ Project (OCP) immersion-fluid requirements, what is still to be tested, and how 
 4. **Tough Q&A**: the hard questions, answered and tagged.
 5. **Crash course** (`course.html`): 18 lessons from "every watt becomes heat" to defending the case.
 
+## Simulation results and spec sheets
+
+- [Results page](https://1boscochiramel.github.io/Adipec-immersive-coolant-/results.html): design-window map and scan for narrow cuts C19–C28.
+- `data/OCP_Fluid_Speclist_GroupIII_TargetCut_C21-C25.xlsx`: OCP Rev 2.1 spec list for the target narrow cut (estimates labelled).
+- `data/OCP_Fluid_Speclist_GroupIII_2cSt_PublicData.xlsx`: measured public data only.
+- `simulation/`: cut-simulation report (PDF), results (md/json) and the Python + DWSIM 9.0.5 model scripts.
+
 ## How the numbers work
 
 Every value is tagged:
@@ -39,6 +46,7 @@ runs entirely in the browser.
 | --- | --- |
 | `index.html`, `app.js`, `story.js`, `style.css` | simulator |
 | `course.html`, `course.js` | crash course |
+| `results.html`, `data/`, `simulation/` | simulation results, OCP spec sheets, model scripts |
 
 ## Run locally
 
