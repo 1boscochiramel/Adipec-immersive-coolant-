@@ -31,7 +31,7 @@ python -m immersion_screen measured          # OCP FOMs of measured Group III / 
 python -m immersion_screen narrow C21 C25    # simulate a narrow cut
 python -m immersion_screen window            # scan the design window
 python -m immersion_screen cut --tbp 5:360,50:385,95:410 --sg 0.836   # your own boiling curve
-python -m pytest -q                          # 43 validation tests (pip install pytest)
+python -m pytest -q                          # validation tests (pip install pytest)
 ```
 
 Optional install: `pip install -e .` gives the `immersion-screen` command.

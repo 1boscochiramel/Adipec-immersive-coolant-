@@ -21,8 +21,8 @@
  },
  "dk": {
   "value": 2.3,
-  "op": "<=",
-  "src": "IR p19 (20/40 GHz, 20/70 C)"
+  "op": "<",
+  "src": "BS pp27-28 text; DECK (20/40 GHz, 20/70 C)"
  },
  "df": {
   "value": 0.05,

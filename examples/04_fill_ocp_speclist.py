@@ -2,7 +2,7 @@
 import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from immersion_screen import measured
 from immersion_screen.speclist import fill
-row = {r["name"]: r for r in measured.load_crc()}["Group III B 2 cSt (Yubase)"]
+row = {r["name"]: r for r in measured.load_crc()}["Group III B 2 cSt"]
 T = [20, 30, 40, 50, 60, 70]
 p = {t: measured.properties(row, t) for t in T}
 props = dict(category="Hydrocarbons", basis="CRC AVFL-37 'Group III B, 2 cSt' (measured); computed with immersion_screen",
