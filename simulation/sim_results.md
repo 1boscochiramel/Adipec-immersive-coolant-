@@ -2,7 +2,7 @@
 | case | Tb range °C (≈ carbon) | KV40 cSt | KV100 cSt | μ25 mPa·s | flash CC °C (model) |
 |---|---|---|---|---|---|
 | CRC 2 cSt Group III (SG15 0.836) (sim) | 341–411 (C20–C26) | 9.85 | 2.752 | 13.3 | 180 |
-| CRC 2 cSt Group III (SG15 0.836) (measured) | — | 9.435 | 2.547 | 13.04 | Yubase 2 COC 160 C (SK SDS) -> CC ~145-155 |
+| CRC 2 cSt Group III (SG15 0.836) (measured) | — | 9.435 | 2.547 | 13.04 | 2 cSt Group III COC 160 C (public SDS) -> CC ~145-155 |
 | Light FT base oil FT-A (SG15 0.805 assumed) (sim) | 354–419 (C21–C27) | 8.98 | 2.432 | 11.9 | 189 |
 | Light FT base oil FT-A (SG15 0.805 assumed) (measured) | — | 10.0 | 2.806 | — | — |
 

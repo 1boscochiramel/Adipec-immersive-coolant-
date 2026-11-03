@@ -1,6 +1,6 @@
 """Simulate base-oil cuts from a TBP boiling curve with DWSIM characterisation + published mixing rules.
 
-1. VALIDATE against public anchors (pure alkanes, CRC 2 cSt Group III, light FT base oil, Yubase 2 flash).
+1. VALIDATE against public anchors (pure alkanes, CRC 2 cSt Group III, light FT base oil, 2 cSt Group III flash).
 2. SIMULATE the target narrow cut C21-C26, the wide 2 cSt cut, light-tail trims, and a 4 cSt (C25-C35) cut.
 Outputs a results table (markdown + json) next to this file.
 Run: .venv/Scripts/python.exe -X utf8 adipec_sim/dwsim_sim/sim_cut.py
@@ -75,7 +75,7 @@ def run():
     out = {}
     out["validation"] = {
         "CRC 2 cSt Group III (SG15 0.836)": dict(sim=simulate(CRC2_CURVE, 0.836),
-            measured=dict(kv40=9.435, kv100=2.547, mu25=13.04, flash_note="Yubase 2 COC 160 C (SK SDS) -> CC ~145-155")),
+            measured=dict(kv40=9.435, kv100=2.547, mu25=13.04, flash_note="2 cSt Group III COC 160 C (public SDS) -> CC ~145-155")),
         "Light FT base oil FT-A (SG15 0.805 assumed)": dict(sim=simulate(FTA_CURVE, 0.805),
             measured=dict(kv40=10.00, kv100=2.806)),
     }

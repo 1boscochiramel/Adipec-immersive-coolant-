@@ -4,13 +4,13 @@
 
 // ---------------- deck constants ----------------
 const DECK = {
-  air: [0, 25],                 // kW/rack, slide 2
-  dlc: [80, 150],               // "80–150+"
-  imm: [100, 250],              // "100–250+"
+  air: [20, 30],                // kW/rack, slide 2
+  dlc: [50, 130],               // "50–130+"
+  imm: [100, null],             // "100+"
   fom1T1: 35, fom1T2: 45,       // slide 7
   fom2Min: 19,
   muMax: 15,                    // mPa·s
-  n: 0.2813,                    // FOM1 exponent as printed on slide 7 (gap a5d1e003)
+  n: 0.2813,                    // STD: OCP natural-convection exponent
   dkMax: 2.3, dfMax: 0.05,      // slide 8
   strengthMin: 6,               // kV/mm
   resMin: 2.0,                  // GΩ·m, new fluid
@@ -19,22 +19,20 @@ const DECK = {
   gw: {me: 2.5, in: 1.4},       // slide 11
   lPerKW: 10,
   price: [2, 5],                // US$/L Group III target
-  fluoro: [80, 200],            // US$/L fluorinated benchmark
-  rho: 0.82,                    // kg/L, back-solved from 32,000 t / 39 ML (gap a5d1e002)
+  fluoro: 30,                  // US$/L fluorinated benchmark
+  rho: 0.82,                    // kg/L, slide market assumption
 };
 
 // fluid presets. fom1 is quoted at the preset's own viscosity mu0; null = not reported.
 const PRESETS = {
   g3:   {name:"Group III target: narrow cut C21–C25", fom1:37.2, mu0:13.0, fom2:28.8, dk:null, df:null, str:null, res:12400, flash:163, flashHi:189, flashEst:true, cc:false, ait:null,
-         note:"Target narrow cut C21–C25 (KV100 ≤ 2.8 cSt, tail below C21 and heavy end above C25 removed; simulated μ25 ≈ 13.6 mPa·s, flash 163–189 °C closed cup). Thermal, viscosity and resistivity: measured 2 cSt Group III of equivalent viscosity (CRC AVFL-37, SwRI 2022). Flash: ESTIMATE 163–189 °C closed cup, from a cut simulation (DWSIM characterisation) and narrow-cut isoparaffinic fluids of the same viscosity (Shell Diala S4 ZX-I, PMCC 184–191 °C). Dk, Df, dielectric strength and autoignition: not yet measured."},
+         note:"CALC · Target narrow cut C21–C25 (KV100 ≤ 2.8 cSt, tail below C21 and heavy end above C25 removed; simulated μ25 ≈ 13.6 mPa·s, flash 163–189 °C closed cup). DECK · Thermal and viscosity screening from published 2 cSt Group III reference properties; CALC · resistivity 12,400 GΩ·m = 1.24 × 10^15 Ω·cm ÷ 10^11 (CRC AVFL-37, SwRI 2022). DECK · Flash: ESTIMATE 163–189 °C closed cup, from a cut simulation (DWSIM characterisation) and narrow-cut isoparaffinic fluids of the same viscosity (STD · commercial narrow-cut isoparaffinic analogue, PMCC 184–191 °C). Dk, Df, dielectric strength and autoignition: not yet measured."},
   wide2: {name:"Wide 2 cSt Group III cut (as sold)", fom1:37.2, mu0:13.0, fom2:28.8, dk:null, df:null, str:null, res:12400, flash:160, cc:false, ait:260, aitLt:true,
-         note:"Same viscosity as the target, but a wide cut with a light tail: 160 °C open cup and autoignition '> 260 °C' (lower bound) on the producer's SDS (SK Yubase 2). Closed cup reads lower, at or near the 150 °C gate."},
+         note:"STD · Public SDS fire properties; DECK · reference thermal screening. Same viscosity as the target, but a wide cut with a light tail: 160 °C open cup and autoignition '> 260 °C' (lower bound) in a commercial 2 cSt Group III public SDS (STD). Closed cup reads lower, at or near the 150 °C gate."},
   g4:   {name:"4 cSt Group III (≈ C25–C35)", fom1:31.1, mu0:28.9, fom2:30.2, dk:null, df:null, str:null, res:null, flash:200, cc:false, ait:320, aitLt:true,
-         note:"Heavier standard grade, computed from CRC AVFL-37 measured data: fire-safe (200–230 °C open cup, producer TDS; autoignition > 320 °C, SDS) but μ25 ≈ 29 mPa·s and FOM1 ≈ 31 fail the thermal gates at 25 °C."},
-  lit:  {name:"Hydrocarbon base oils, lighter end of literature", fom1:51, mu0:5.5, fom2:32, dk:null, df:null, str:null, res:null, flash:null, cc:false, ait:null,
-         note:"Slide 7 literature ranges: FOM1 up to 51, FOM2 up to 32, μ down to 5.5 mPa·s. Electrical and fire values not given on the slide."},
+         note:"CALC · Heavier standard grade, computed from CRC AVFL-37 measured data: public reference fire properties (200–230 °C open cup, TDS; autoignition > 320 °C, SDS; STD) but μ25 ≈ 29 mPa·s and FOM1 ≈ 31 fail the thermal gates at 25 °C."},
   custom:{name:"Custom — enter your own measurements", fom1:40, mu0:12, fom2:25, dk:2.1, df:0.001, str:10, res:5, flash:180, cc:true, ait:320,
-         note:"Placeholder values for you to overwrite. They are not data for any real fluid."},
+         note:"CALC · Illustrative placeholder values for you to overwrite. They are not data for any real fluid."},
 };
 const FIELDS = [   // key, label, unit, step
   ["fom1","FOM1 at the preset viscosity","",0.1],
@@ -50,13 +48,13 @@ const FIELDS = [   // key, label, unit, step
 const REFS = [
   ["ADIPEC 2026 slides, B. Chiramel", "every DECK value on this page: rack bands, OCP limits, Group III read-outs, PFAS status, roadmap, market sizing"],
   ["CRC Report AVFL-37 (Southwest Research Institute, 2022)", "measured viscosity, density, conductivity, specific heat and resistivity of a 2 cSt Group III base oil, used for the Group III preset"],
-  ["Repsol / RLESA Base Oils GII-GIII technical data sheet (2017)", "open-cup flash points (2 and 4 cSt grades), pour point and sulphur"],
-  ["SK Lubricants YUBASE 2 safety data sheet (via NextSDS)", "wide 2 cSt cut: 160 °C open cup, autoignition > 260 °C"],
-  ["Shell Diala S4 ZX-I and Shell S5 X data sheets", "narrow-cut isoparaffinic fluids at KV40 9.6–9.8 cSt: 184–191 °C closed cup, 200 °C open cup, autoignition 355 °C"],
-  ["Chevron patent US7846880B2", "light base oil at KV100 2.81 cSt boils 356 / 386 / 417 °C at 5 / 50 / 95 % (≈ C21–C25)"],
+  ["Commercial base-oil technical data sheet (2017; STD)", "open-cup flash points (2 and 4 cSt grades), pour point and sulphur"],
+  ["Commercial 2 cSt Group III public safety data sheet (STD)", "wide 2 cSt cut: 160 °C open cup, autoignition > 260 °C"],
+  ["commercial narrow-cut isoparaffinic fluid A and commercial narrow-cut isoparaffinic fluid B data sheets", "narrow-cut isoparaffinic fluids at KV40 9.6–9.8 cSt: 184–191 °C closed cup, 200 °C open cup, autoignition 355 °C"],
+  ["Public patent US7846880B2 (STD)", "light base oil at KV100 2.81 cSt boils 356 / 386 / 417 °C at 5 / 50 / 95 % (≈ C21–C25)"],
   ["Open Compute Project (OCP), immersion fluid requirements", "FOM1/FOM2/FOM3 definitions and Tier 1/Tier 2 thresholds, electrical and fire limits (as quoted on slides 7–8)"],
-  ["EU REACH PFAS restriction (ECHA RAC/SEAC)", "status as of October 2026, slide 6"],
-  ["Minnesota and Maine PFAS product laws", "category bans and 2032 broad prohibitions, slide 6"],
+  ["EU REACH PFAS restriction (ECHA)", "broad restriction under review; final decision pending (DECK)"],
+  ["Minnesota and Maine PFAS product laws", "selected bans from 2025 and broader prohibition 2032 in Minnesota; Maine timing and exemptions differ"],
   ["API 1509 base-oil categories", "Group I–V definitions (saturates, sulphur, viscosity index)"],
 ];
 
@@ -65,24 +63,24 @@ const HISTORY = [
  {eyebrow:"Era 1 → 3", title:"How servers have been cooled",
   intro:"Each step moves the cooling medium closer to the silicon (slide 2).",
   stages:[
-   {tag:"≤ 25 kW / rack", h:"Air", d:"Fans and heat sinks; all heat exits to room air. Enough for conventional servers, not for AI training racks.", cls:"fail"},
-   {tag:"80–150+ kW / rack", h:"Direct-to-chip", d:"Cold plates carry liquid to the hottest chips only. The rest of the board still needs air."},
-   {tag:"100–250+ kW / rack", h:"Single-phase immersion", d:"The whole server is submerged in a dielectric liquid and server fans are removed.", cls:"win"}],
+   {tag:"≈ 20–30 kW / rack", h:"Air", d:"Fans and heat sinks; all heat exits to room air. Enough for conventional servers, not for AI training racks.", cls:"fail"},
+   {tag:"50–130+ kW / rack", h:"Direct-to-chip", d:"Cold plates carry liquid to the hottest chips only. The rest of the board still needs air."},
+   {tag:"100+ kW / rack", h:"Single-phase immersion", d:"The whole server is submerged in a dielectric liquid and server fans are removed.", cls:"win"}],
   take:"<b>Takeaway:</b> once racks pass ~100 kW, the coolant itself becomes a design choice — and a product."},
  {eyebrow:"Coolant chemistry", title:"From fluorinated default to hydrocarbons",
   intro:"Why the early choice is being revisited (slides 4–6).",
   stages:[
    {tag:"Early default", h:"Fluorinated liquids", d:"Non-flammable, chemically inert, low Dk, and capable of two-phase latent-heat cooling."},
-   {tag:"2023 → 2032", h:"PFAS headwinds", d:"EU REACH restriction opinion adopted by RAC (Mar 2026), final decision pending. Minnesota and Maine broad prohibitions in 2032, with exemptions.", cls:"fail"},
-   {tag:"Now", h:"Hydrocarbons, incl. Group III", d:"No PFAS, GWP ≈ 0, open-bath service, target US$2–5 per litre against US$80–200 for fluorinated.", cls:"win"}],
+   {tag:"Policy · DECK", h:"PFAS headwinds", d:"EU REACH: broad PFAS restriction under review; final decision pending. Minnesota: selected bans from 2025, broader prohibition 2032. Maine: phased restrictions; timing and cooling-equipment exemptions differ.", cls:"fail"},
+   {tag:"Now", h:"Hydrocarbons, incl. Group III", d:"No PFAS, open-bath service, target US$2–5 per litre against ≈ US$30/L for fluorinated two-phase fluid.", cls:"win"}],
   take:"<b>Takeaway:</b> single-phase hydrocarbons trade non-flammability for cost, simplicity and regulatory headroom — so fire-safety gates matter."},
  {eyebrow:"From screening to product", title:"The qualification road",
   intro:"What has to happen before a refinery stream becomes a qualified coolant (slide 10).",
   stages:[
    {tag:"Stage 01", h:"Fluid characterisation", d:"Thermal, electrical, chemical and safety properties against the OCP fluid gates."},
-   {tag:"Stage 02 · 80 °C × 336 h", h:"Accelerated ageing", d:"Fluid together with seals, plastics, cables and metals."},
-   {tag:"Stage 03 · 80 °C × 14 days", h:"Component soak", d:"Representative server parts, followed by a functional retest.", cls:"win"}],
-  take:"<b>Takeaway:</b> characterise → age → validate real components. Today's numbers are a screening result, not a qualification."},
+   {tag:"Stage 02 · 80 ± 2 °C × 14 days", h:"Material compatibility", d:"Soak seals, plastics, cables and metals with an untouched control."},
+   {tag:"Stage 03", h:"Functional validation", d:"Retest soaked parts, then run a pilot tank with real servers under load.", cls:"win"}],
+  take:"<b>Takeaway:</b> characterise → soak with control → retest and pilot under load. Today's numbers are a screening result, not a qualification."},
 ];
 
 // ---------------- tough Q&A ----------------
@@ -95,19 +93,19 @@ const QA = [
     sandbox:"Preset → '4 cSt Group III' and watch FOM1 and FOM3 fail."},
    {q:"FOM1 ≈ 37 only clears Tier 1. Isn't Tier 2 where AI is heading?",
     tags:["deck","calc"],
-    a:"Tier 1 (≥ 35) covers current server loads; Tier 2 (≥ 45) is for future loads. Holding other properties fixed, FOM1 reaches 45 at about <b>6.6 mPa·s</b> at 25 °C. But OCP plans to move the FOM1 reference to 50 °C, closer to real bath temperatures; at 50 °C this fluid computes to about <b>46</b>, which is Tier 2.",
+    a:"Tier 1 (≥ 35) covers current server loads; Tier 2 (≥ 45) is for future loads. Holding other properties fixed, FOM1 reaches 45 at about <b>6.6 mPa·s</b> at 25 °C. This is a sensitivity calculation, not a Tier 2 qualification. The public-reference screening result misses Tier 2 at 25 °C.",
     sandbox:"Viscosity lever → drag down to 6.6 mPa·s."},
    {q:"Why single-phase at all? Boiling removes far more heat.",
-    tags:["deck","scope"],
-    a:"Two-phase handles the highest heat fluxes, which is its real strength. It also needs a sealed tank, a condenser, pressure control and make-up for vapour loss, and today's two-phase fluids are fluorinated, with the PFAS exposure that brings. Single-phase hydrocarbons run in an open bath with a pump and CDU. We do not claim single-phase wins at every heat flux; we claim it covers the 100–250+ kW rack band at much lower fluid cost."}]},
+    tags:["deck","std","calc","scope"],
+    a:"Two-phase handles the highest heat fluxes, which is its real strength. It also needs a sealed tank, a condenser, pressure control and make-up for vapour loss, and today's two-phase fluids are fluorinated, with the PFAS exposure that brings. Single-phase hydrocarbons run in an open bath with a pump and CDU. We do not claim single-phase wins at every heat flux; we claim it covers the 100+ kW rack band at much lower fluid cost."}]},
  {cat:"Electrical & signal integrity", icon:"⚡", desc:"A fluid that touches every trace.",
   qs:[
    {q:"What is Group III's dielectric constant at server frequencies?",
-    tags:["deck","scope"],
-    a:"No public Group III value at 20–40 GHz was found. OCP's own chart puts hydrocarbon-family liquids between Dk 2.0 and 2.3, with several at the 2.3 limit, so Dk has to be <b>measured</b> at the high frequencies modern links use, and across temperature. The scorecard marks it <b>TO TEST</b>."},
-   {q:"Df and resistivity aren't on your slides.",
-    tags:["deck","scope"],
-    a:"Correct. The slides give the OCP limits (Df ≤ 0.05; resistivity ≥ 2.0 GΩ·m new) but no Group III value, so the scorecard marks both <b>to be measured</b>. Stage 1 of the roadmap measures them; stage 2 ageing tracks how they drift as the fluid oxidises or picks up moisture."},
+    tags:["deck","std","calc","scope"],
+    a:"The cited public reference data do not report Dk or Df at the required conditions: <b>20 and 40 GHz, each at 20 and 70 °C</b> (DECK). Both must be measured for the target cut. The scorecard marks it <b>TO TEST</b>."},
+   {q:"Are Df and resistivity established for the target cut?",
+    tags:["deck","std","calc","scope"],
+    a:"The slide limits are Df ≤ 0.05 and resistivity ≥ 2.0 GΩ·m new, ≥ 0.20 over life. CRC AVFL-37 reports 1.24 × 10<sup>15</sup> Ω·cm for the reference sample: dividing by 10<sup>11</sup> gives 12,400 GΩ·m (CALC). This does not establish the target cut’s properties. Df and target-cut resistivity still require measurement."},
    {q:"Is dielectric strength a concern?",
     tags:["std","scope"],
     a:"It is not published for this grade, so it is <b>TO TEST</b> (ASTM D1816, 1 mm). Hydrocarbon-family liquids in OCP's chart span roughly 8–24 kV/mm against a 6 kV/mm gate, and breakdown strength depends strongly on dissolved water and particles, so drying and filtration matter in service. Measured volume resistivity, by contrast, is about 12,400 GΩ·m, far above the 2 GΩ·m gate."}]},
@@ -118,13 +116,13 @@ const QA = [
     a:"With a <b>narrow cut, C21–C25</b>: cut the light tail for flash point <i>and</i> the heavy end for viscosity. Removing only the light tail raises viscosity past the limit (simulated μ25 12.7 → 16.9 mPa·s). The wide 2 cSt cut sold today has a light tail: 160 °C open cup, close to the 150 °C closed-cup gate. Commercial narrow-cut isoparaffinic fluids of the <b>same viscosity</b> (KV40 9.6–9.8 cSt) reach <b>184–191 °C closed cup</b>. A refinery Group III boils slightly lower at equal viscosity, so the target cut is estimated at <b>163–189 °C closed cup</b>: a margin over 150 °C, still to be confirmed by ASTM D93.",
     sandbox:"Switch the preset between 'Wide 2 cSt cut', 'target narrow cut' and '4 cSt' to see the window."},
    {q:"Why put a combustible oil in a data hall when fluorinated fluids don't burn?",
-    tags:["deck","scope"],
+    tags:["deck","std","calc","scope"],
     a:"Non-flammability is a genuine strength of fluorinated fluids (slide 6). For hydrocarbons, the gates are flash point ≥ 150 °C closed cup and autoignition ≥ 300 °C, both far above bath operating temperatures. Acceptance by the local fire code for each site is outside this study."}]},
  {cat:"Materials & qualification", icon:"🧪", desc:"What the fluid does to the server, and vice versa.",
   qs:[
    {q:"Will it swell seals or attack cable jackets?",
-    tags:["deck","scope"],
-    a:"That is exactly stage 2: fluid aged with seals, plastics, cables and metals at <b>80 °C × 336 h</b>, then stage 3 soaks representative server parts at <b>80 °C × 14 days</b> with a functional retest. No compatibility result is claimed yet."},
+    tags:["deck","std","calc","scope"],
+    a:"Stage 1 characterises the fluid against OCP thermal, electrical, chemical and safety criteria. Stage 2 soaks seals, plastics, cables and metals at <b>80 ± 2 °C × 14 days</b>, with an untouched control. Stage 3 retests the soaked parts, then runs a <b>pilot tank with real servers under load</b>. No compatibility result is claimed yet."},
    {q:"Why Group III rather than PAO, which is already used?",
     tags:["std","deck"],
     a:"Both are hydrocarbons in the same family (slide 5). PAO is a synthetic made by oligomerising olefins. Group III comes from hydroprocessing refinery lube streams, which is the refinery opportunity this talk is about: a domestic product at a target of US$2–5 per litre."}]},
@@ -134,9 +132,9 @@ const QA = [
     tags:["deck","calc"],
     a:"The slide applies 10 L/kW across the identified 3.9 GW AI pipeline, so read 32,000 t as the size <b>if</b> that pipeline were immersion-cooled. It is a first fill only, with no top-up. The share slider in the Sandbox scales it down linearly.",
     sandbox:"Market sizing → set the share to 25 %."},
-   {q:"\"16× cheaper\" — compared with what?",
+   {q:"About 6× or more — compared with what?",
     tags:["deck","calc"],
-    a:"Fluorinated fluids at US$80–200 per litre against a Group III target of US$2–5. The most conservative pairing is 80 ÷ 5 = <b>16×</b>; the other extreme is 200 ÷ 2 = 100×. US$2–5 is a target price, not a quotation."},
+    a:"Fluorinated two-phase fluid at ≈ US$30/L against a hydrocarbon single-phase target of US$2–5/L. The conservative comparison is 30 ÷ 5 = <b>about 6× or more</b>. US$2–5 is a target price, not a quotation."},
    {q:"How sensitive is the tonnage to 10 L/kW?",
     tags:["calc"],
     a:"Linear. Tank designs and loading vary, so the slider runs from 5 to 15 L/kW: that moves the 3.9 GW estimate from about 16,000 t to about 48,000 t at the same density."}]},
@@ -169,15 +167,15 @@ function gates(){
   else add("Thermal","FOM2 forced convection",fmt(f.fom2,1),"> 19",f.fom2>DECK.fom2Min?"pass":"fail");
   add("Viscosity","FOM3 · μ at 25 °C",fmt(S.mu,1)+" mPa·s","≤ 15 mPa·s",
       S.mu<=DECK.muMax?"pass":S.mu<=DECK.muMax*1.05?"near":"fail");
-  if(f.dk==null) add("Electrical","Dielectric constant Dk","—","< 2.3","test","not reported");
-  else add("Electrical","Dielectric constant Dk",fmt(f.dk,2),"< 2.3",
-      f.dk<DECK.dkMax?"pass":f.dk<=DECK.dkMax*1.02?"test":"fail", f.dk>=DECK.dkMax&&f.dk<=DECK.dkMax*1.02?"at the limit — test at high frequency":"");
-  if(f.df==null) add("Electrical","Loss tangent Df","—","≤ 0.05","test","not yet measured");
-  else add("Electrical","Loss tangent Df",fmt(f.df,3),"≤ 0.05",f.df<=DECK.dfMax?"pass":"fail");
+  if(f.dk==null) add("Electrical","Dielectric constant Dk","—","< 2.3 · 20 & 40 GHz; 20 & 70 °C","test","not reported");
+  else add("Electrical","Dielectric constant Dk",fmt(f.dk,2),"< 2.3 · 20 & 40 GHz; 20 & 70 °C",
+      f.dk<DECK.dkMax?"pass":"fail", f.dk>=DECK.dkMax?"at or above the strict gate — verify GHz measurements":"");
+  if(f.df==null) add("Electrical","Loss tangent Df","—","≤ 0.05 · 20 & 40 GHz; 20 & 70 °C","test","not yet measured");
+  else add("Electrical","Loss tangent Df",fmt(f.df,3),"≤ 0.05 · 20 & 40 GHz; 20 & 70 °C",f.df<=DECK.dfMax?"pass":"fail");
   if(f.str==null) add("Electrical","Dielectric strength","—","≥ 6 kV/mm","test","not reported");
   else add("Electrical","Dielectric strength",fmt(f.str,1)+" kV/mm","≥ 6 kV/mm",f.str>=DECK.strengthMin?"pass":"fail");
-  if(f.res==null) add("Electrical","Volume resistivity (new)","—","≥ 2.0 GΩ·m","test","not yet measured");
-  else add("Electrical","Volume resistivity (new)",fmt(f.res,1)+" GΩ·m","≥ 2.0 GΩ·m",f.res>=DECK.resMin?"pass":"fail");
+  if(f.res==null) add("Electrical","Volume resistivity (new)","—","≥ 2.0 GΩ·m new; ≥ 0.20 over life","test","not yet measured");
+  else add("Electrical","Volume resistivity (new)",fmt(f.res,1)+" GΩ·m","≥ 2.0 GΩ·m new; ≥ 0.20 over life",f.res>=DECK.resMin?"pass":"fail");
   if(f.flash==null) add("Safety","Flash point","—","≥ 150 °C closed cup","test","not reported");
   else{
     const ok = f.flash>=DECK.flashMin;
@@ -200,27 +198,27 @@ function txt(svg,x,y,s,a={}){const t=svgEl("text",{x,y,...a});t.textContent=s;sv
 function renderRack(){
   const svg=$("rackChart"); svg.innerHTML="";
   const X0=10,X1=310,max=300, sx=v=>X0+(X1-X0)*Math.min(v,max)/max;
-  const bands=[["Air",DECK.air[0],DECK.air[1],"#c9d1dc",14,"≤ 25"],["Direct-to-chip",DECK.dlc[0],max,"#b6c9e4",40,"80–150+"],["Single-phase immersion",DECK.imm[0],max,"#b9dfbb",66,"100–250+"]];
+  const bands=[["Air",DECK.air[0],DECK.air[1],"#c9d1dc",14,"20–30"],["Direct-to-chip",DECK.dlc[0],max,"#b6c9e4",40,"50–130+"],["Single-phase immersion",DECK.imm[0],max,"#b9dfbb",66,"100+"]];
   bands.forEach(([n,a,b,c,y,lab],i)=>{
-    const solidEnd = i===0?b:(i===1?DECK.dlc[1]:DECK.imm[1]);
+    const solidEnd = i===0?b:(i===1?DECK.dlc[1]:max);
     svg.appendChild(svgEl("rect",{x:sx(a),y,width:sx(solidEnd)-sx(a),height:20,rx:4,fill:c}));
     if(b>solidEnd) svg.appendChild(svgEl("rect",{x:sx(solidEnd),y,width:sx(b)-sx(solidEnd),height:20,rx:4,fill:c,opacity:.45}));
-    txt(svg,sx(a)+4,y+13.5,i===0?n:`${n} · ${lab} kW`,{style:"font:700 8.5px sans-serif;fill:#14213D"});
+    txt(svg,sx(a)+4,y+13.5,`${n} · ${lab} kW`,{style:"font:700 8.5px sans-serif;fill:#14213D"});
   });
   for(let v=0;v<=300;v+=50){svg.appendChild(svgEl("line",{x1:sx(v),x2:sx(v),y1:90,y2:94,class:"axis"}));txt(svg,sx(v),103,v,{class:"tick","text-anchor":"middle"});}
-  txt(svg,160,115,"kW per rack",{class:"tick","text-anchor":"middle"});
+  txt(svg,160,115,"kW per rack · chart ends at 300 (CALC), not a capacity cap",{class:"tick","text-anchor":"middle"});
   svg.appendChild(svgEl("line",{x1:sx(S.rack),x2:sx(S.rack),y1:6,y2:92,stroke:"#C84C3A","stroke-width":2.5}));
   txt(svg,Math.min(sx(S.rack)+3,270),9,`${S.rack} kW`,{style:"font:800 9px sans-serif;fill:#C84C3A"});
   const fits=[]; if(S.rack<=DECK.air[1])fits.push("air");
   if(S.rack>=DECK.dlc[0])fits.push("direct-to-chip"); if(S.rack>=DECK.imm[0])fits.push("single-phase immersion");
   $("rackNote").innerHTML = fits.length ? `At <b>${S.rack} kW</b>: typical fit is <b>${fits.join(" or ")}</b>.`
-    : `At <b>${S.rack} kW</b>: beyond air (≤ 25 kW); liquid assistance needed — the slide's liquid bands start at 80 kW.`;
+    : `At <b>${S.rack} kW</b>: above the slide’s air band (≈ 20–30 kW); the direct-to-chip band starts at ≈ 50 kW.`;
 }
 
 function renderScore(){
   const G=gates(), by={pass:0,near:0,test:0,fail:0}; G.forEach(g=>by[g.status]++);
   $("scorecard").innerHTML = `<table class="score"><thead><tr><th>Requirement</th><th>Fluid</th><th>OCP limit</th><th>Status</th></tr></thead><tbody>`+
-    G.map(g=>`<tr><td><span class="pill">${g.pillar}</span> ${g.name}${g.why?`<div class="why">${g.why}</div>`:""}</td><td><b>${g.val}</b></td><td>${g.req}</td><td><span class="st ${g.status}">${STLABEL[g.status]}</span></td></tr>`).join("")+
+    G.map(g=>`<tr><td><span class="pill">${g.pillar}</span> ${g.name}${g.why?`<div class="why">${g.why}</div>`:""}</td><td><b>${g.val}</b> <span class="src calc">CALC / reference</span></td><td>${g.req} <span class="src ext">DECK</span></td><td><span class="st ${g.status}">${STLABEL[g.status]}</span></td></tr>`).join("")+
     `</tbody></table><div class="assume">${S.fluid.note}</div>`;
   const v=$("verdict");
   let cls,big,sub;
@@ -263,20 +261,21 @@ function renderMarket(){
   const isDeck = Math.abs(S.me-2.5)<1e-9&&Math.abs(S.in-1.4)<1e-9&&S.share===100&&S.int===10;
   $("market").innerHTML =
     row("AI load considered", fmt(gw,2)+" GW")+
-    row("Coolant volume (first fill)", (L/1e6).toFixed(1)+" million L")+
+    row("Coolant volume (first fill)", Number((L/1e6).toFixed(2))+" million L")+
     row(`Mass at ${DECK.rho} kg/L <span class="src calc">CALC</span>`, (Math.round(t/100)*100).toLocaleString("en-US")+" t")+
     row(`Value at US$${fmt(S.price,1)}/L`, M(L*S.price))+
     row("Value at deck target US$2–5/L", M(L*DECK.price[0])+" – "+M(L*DECK.price[1]))+
-    row("Same litres in fluorinated fluid (US$80–200/L)", M(L*DECK.fluoro[0])+" – "+M(L*DECK.fluoro[1]))+
-    row("Price ratio, closest ends", (DECK.fluoro[0]/DECK.price[1]).toFixed(0)+"× ")+
-    (isDeck?`<div class="badge">✓ Reproduces slide 11: ≈ 39 ML · ≈ 32,000 t · ≈ US$80–200 M</div>`:"");
+    row("Same litres in fluorinated two-phase fluid (≈ US$30/L)", M(L*DECK.fluoro))+
+    row("Price ratio, closest ends", (DECK.fluoro/DECK.price[1]).toFixed(0)+"× or more (30 ÷ 5)")+
+    (isDeck?`<div class="badge">DECK · First-fill ceiling: ≈ 39 ML · ≈ 32,000 t · ≈ US$78–195 M</div>`:"")+
+    `<div class="assume">CALC · 10% adoption: 3.9 M L, ≈ 3,200 t, ≈ US$8–20 M. 25%: 9.75 M L, ≈ 8,000 t, ≈ US$20–49 M. Not every announced campus will use immersion.</div>`;
 }
 
 function renderPhases(){
   const rows=[["Heat-transfer mechanism","Sensible heat: fluid warms and is pumped to the CDU","Latent heat: fluid boils at the chip and condenses"],
-    ["Fluid cost","Hydrocarbon target ~US$2–5/L","Fluorinated liquids: far higher"],
+    ["Fluid cost","Hydrocarbon target ~US$2–5/L","Fluorinated two-phase: ≈ US$30/L (DECK)"],
     ["Fluid loss / make-up","Low: coolant stays liquid in the bath","Vapour loss needs sealed containment and make-up"],
-    ["Environment / regulation","No PFAS; GWP ≈ 0","PFAS exposure and regulatory headwinds"],
+    ["Environment / regulation","Pure hydrocarbons contain no PFAS (STD)","PFAS exposure and regulatory headwinds"],
     ["Tank & maintenance","Open bath + pump/CDU; simpler service","Sealed tank + condenser + pressure control"]];
   $("phases").innerHTML=`<table class="score"><thead><tr><th></th><th>Single-phase</th><th>Two-phase</th></tr></thead><tbody>`+
     rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")+`</tbody></table>`;
@@ -333,7 +332,7 @@ function wire(){
   });
   $("reflist").innerHTML = REFS.map(r=>`<div>• <b>${r[0]}</b> — ${r[1]}</div>`).join("");
   $("history").innerHTML = HISTORY.map(b=>`
-    <div class="histblock"><div class="heyebrow">${b.eyebrow}</div><h2>${b.title}</h2><p class="hintro">${b.intro}</p>
+    <div class="histblock"><div class="heyebrow">${b.eyebrow}</div><h2>${b.title}</h2><p class="hintro">${b.intro} <span class="src ext">DECK values</span> <span class="src std">STD context</span></p>
       <div class="stages" style="--n:${b.stages.length}">
         ${b.stages.map(s=>`<div class="stage ${s.cls||""}"><div class="stag">${s.tag}</div><h4>${s.h}</h4><p>${s.d}</p></div>`).join("")}
       </div><div class="htake">${b.take}</div></div>`).join("");

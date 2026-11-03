@@ -14,7 +14,7 @@ LIMITS = {
     "fom1_tier2":       dict(value=45.0, op=">=", src="BS p14"),
     "fom2":             dict(value=19.0, op=">", src="BS p18"),
     "mu25_mPas":        dict(value=15.0, op="<=", src="BS p19-20 (FOM3, 25 C)"),
-    "dk":               dict(value=2.3, op="<=", src="IR p19 (20/40 GHz, 20/70 C)"),
+    "dk":               dict(value=2.3, op="<", src="BS pp27-28 text; DECK (20/40 GHz, 20/70 C)"),
     "df":               dict(value=0.05, op="<=", src="IR p19 (informative)"),
     "dielectric_kV_mm": dict(value=6.0, op=">=", src="IR p19 (1 mm, lifetime)"),
     "resistivity_GOhm_m_new": dict(value=2.0, op=">=", src="IR p19 (unused fluid)"),
@@ -46,7 +46,7 @@ def check(name, value):
         return "unknown"
     lim = LIMITS[name]
     v, t = value, lim["value"]
-    ok = {">=": v >= t, ">": v > t, "<=": v <= t}[lim["op"]]
+    ok = {">=": v >= t, ">": v > t, "<=": v <= t, "<": v < t}[lim["op"]]
     return "pass" if ok else "fail"
 
 

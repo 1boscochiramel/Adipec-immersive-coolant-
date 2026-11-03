@@ -29,6 +29,7 @@ main{max-width:900px;display:block}
   <a class="back" href="index.html">← back to the simulator</a>
 </header>
 <main class="res">
+  <p class="fine"><span class="src calc">CALC</span> Model outputs and validation differences below. <span class="src std">STD</span> Public reference inputs and test methods. <span class="src ext">DECK</span> Target C21–C25 flash estimate 163–189 °C; OCP gates use the slide values. Sources: <a href="evidence/public_sources.md">generic public reference register</a>.</p>
   <p><b>Short answer: yes, in simulation.</b> A narrow cut of about <b>C21–C25</b> meets the OCP viscosity limit
   (μ25 ≈ 13.6 mPa·s vs ≤ 15), Tier 1 natural convection (FOM1 ≈ 36.8 vs ≥ 35) and the closed-cup flash gate
   (≈ 163–189 °C vs ≥ 150 °C). Removing only the light tail is not enough: it raises viscosity past the limit, so the
@@ -63,13 +64,13 @@ main{max-width:900px;display:block}
       <span>Method, validation, scenarios, window scan and limits.</span></a>
     <a href="simulation/scan_window.md"><b>Window scan table</b><span>Markdown; JSON in simulation/scan_window.json.</span></a>
     <a href="https://github.com/1boscochiramel/Adipec-immersive-coolant-#quick-start"><b>immersion_screen — pure-Python toolkit (run it on any laptop)</b>
-      <span>Same model without DWSIM: <code>python -m immersion_screen narrow C21 C25</code>, <code>window</code>, <code>measured</code>; 43 validation tests; screen your own boiling curve.</span></a>
+      <span>Same model without DWSIM: <code>python -m immersion_screen narrow C21 C25</code>, <code>window</code>, <code>measured</code>; validation tests; screen your own boiling curve.</span></a>
     <a href="https://github.com/1boscochiramel/Adipec-immersive-coolant-/tree/main/simulation"><b>Original model scripts (Python + DWSIM)</b>
       <span>dw.py, cutmodel.py, sim_cut.py, scan_window.py, crosscheck_flash.py — requires DWSIM 9.0.5 on Windows and pythonnet.</span></a>
   </div>
 
   <p class="fine">Sources: CRC Report AVFL-37 (Southwest Research Institute, 2022); OCP Base Specification for Immersion Fluids (2022) and Immersion Requirements Rev 2.1 (2023);
-  Chevron patent US7846880B2; Shell Diala S4 ZX-I and S5 X data sheets; SK Lubricants YUBASE 2 SDS. B. Chiramel · ADIPEC 2026.</p>
+  commercial supplier patent US7846880B2; commercial narrow-cut isoparaffinic fluid A and narrow-cut isoparaffinic fluid B data sheets; commercial base-oil supplier 2 cSt Group III SDS. B. Chiramel · ADIPEC 2026.</p>
 </main>
 <script>
 fetch("simulation/scan_window.json").then(r=>r.json()).then(rows=>{

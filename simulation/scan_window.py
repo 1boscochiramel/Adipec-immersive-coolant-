@@ -3,7 +3,7 @@
 Each cut is a near-flat TBP between the n-paraffin boiling points of C_lo and C_hi.
 Calibration from sim_cut.py validation:
   mu25:  x 13.04/13.3 (CRC 2 cSt Group III: model 13.3 vs measured 13.04)
-  flash: raw model reproduces narrow GTL (189 vs PMCC 184-191); a -22 C offset reproduces the wide Yubase 2
+  flash: raw model reproduces narrow GTL (189 vs PMCC 184-191); a -22 C offset reproduces the wide 2 cSt Group III
          (172 vs ~150 CC). Report both: optimistic = raw, conservative = raw - 22.
 FOM1 is scaled from the measured CRC 2 cSt point: 37.2 x (13.04/mu25)^0.2813 (other properties held).
 """
